@@ -17,7 +17,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #0a1a0a 0%, #0f2a0f 50%, #0c230c 100%);
+            background: linear-gradient(135deg, #1a3a1a 0%, #2a5a2a 50%, #1e4a1e 100%);
             overflow-x: hidden;
             color: #f0f0f0;
         }
@@ -77,7 +77,7 @@
         
         .card-hover:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2), 0 0 15px rgba(19, 125, 15, 0.2);
+            box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.4), 0 15px 15px -5px rgba(0, 0, 0, 0.3), 0 0 25px rgba(19, 125, 15, 0.3);
         }
         
         .domain-animation {
@@ -99,6 +99,11 @@
             opacity: 0;
         }
         
+        .card-delay-3 {
+            animation: fadeIn 0.5s ease-out 1.4s forwards;
+            opacity: 0;
+        }
+        
         .tagline {
             animation: fadeIn 0.8s ease-out 0.5s forwards;
             opacity: 0;
@@ -106,35 +111,60 @@
         
         /* Custom card styles */
         .dashboard-card {
-            background: rgba(20, 30, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(19, 125, 15, 0.2);
+            background: rgba(30, 45, 30, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(19, 125, 15, 0.3);
             transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         .dashboard-card:hover {
-            border-color: rgba(19, 125, 15, 0.5);
-            background: rgba(25, 40, 25, 0.9);
+            border-color: rgba(19, 125, 15, 0.6);
+            background: rgba(35, 55, 35, 0.95);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(19, 125, 15, 0.2);
         }
         
         .coming-soon-card {
-            background: rgba(15, 25, 15, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(19, 125, 15, 0.1);
+            background: rgba(20, 35, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(19, 125, 15, 0.2);
         }
         
         .footer-bg {
-            background: rgba(10, 20, 10, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 30, 15, 0.85);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
         }
         
         .badge {
-            background: rgba(19, 125, 15, 0.15);
-            color: #8ae085;
+            background: linear-gradient(135deg, rgba(19, 125, 15, 0.2), rgba(19, 125, 15, 0.1));
+            color: #a8f5a3;
+            border: 1px solid rgba(19, 125, 15, 0.3);
         }
         
         .fortify-badge {
             animation: glow 4s infinite ease-in-out;
+            background: rgba(25, 35, 25, 0.9);
+            border: 1px solid rgba(19, 125, 15, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fortify-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(19, 125, 15, 0.8);
+            background: rgba(30, 40, 30, 0.95);
+        }
+        
+        .card-icon {
+            background: linear-gradient(135deg, #137D0F, #0fa30a);
+            box-shadow: 0 0 25px rgba(19, 125, 15, 0.6);
+        }
+        
+        .feature-badge {
+            background: linear-gradient(135deg, rgba(19, 125, 15, 0.25), rgba(19, 125, 15, 0.15));
+            color: #b8ffb3;
+            border: 1px solid rgba(19, 125, 15, 0.4);
         }
     </style>
 </head>
@@ -142,74 +172,75 @@
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- FortifyAI International Badge -->
         <div class="flex justify-end mb-6">
-            <div class="fortify-badge inline-flex items-center px-4 py-2 rounded-full bg-gray-900/80 border border-gray-700">
-                <div class="w-6 h-6 rounded-full bg-gradient-to-r from-green-600 to-green-400 flex items-center justify-center mr-2">
-                    <i class="fas fa-robot text-white text-xs"></i>
+            <a href="https://www.fortifyai.international" target="_blank" 
+               class="fortify-badge inline-flex items-center px-5 py-2.5 rounded-full border no-underline">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-r from-green-600 to-green-400 flex items-center justify-center mr-3">
+                    <i class="fas fa-robot text-white text-sm"></i>
                 </div>
                 <span class="text-sm font-medium text-gray-300">Powered by</span>
                 <span class="text-sm font-bold text-white ml-1">FortifyAI.International</span>
-            </div>
+            </a>
         </div>
         
         <!-- Header -->
         <header class="flex flex-col items-center justify-center mb-12 pt-4">
             <!-- Logo Container -->
             <div class="logo-container mb-8">
-                <div class="w-32 h-32 rounded-full brand-bg flex items-center justify-center shadow-xl" style="box-shadow: 0 0 30px rgba(19, 125, 15, 0.4);">
-                    <div class="w-28 h-28 rounded-full bg-gray-900 flex items-center justify-center">
+                <div class="w-36 h-36 rounded-full brand-bg flex items-center justify-center shadow-2xl" style="box-shadow: 0 0 40px rgba(19, 125, 15, 0.5);">
+                    <div class="w-32 h-32 rounded-full bg-gray-900 flex items-center justify-center">
                         <div class="text-center">
-                            <div class="text-4xl font-bold brand-color">CK</div>
-                            <div class="text-sm font-semibold brand-color mt-1">Cars Kenya</div>
+                            <div class="text-5xl font-bold brand-color">CK</div>
+                            <div class="text-base font-semibold brand-color mt-2">Cars Kenya</div>
                         </div>
                     </div>
                 </div>
             </div>
             
             <!-- Animated Domain -->
-            <h1 class="domain-animation text-3xl md:text-4xl font-bold mb-4 text-white">
+            <h1 class="domain-animation text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
                 WWW.CARSKENYA.CO.KE
             </h1>
             
             <!-- Tagline -->
-            <p class="tagline text-xl md:text-2xl font-medium text-gray-300 mb-3">
+            <p class="tagline text-2xl md:text-3xl font-medium text-gray-200 mb-4">
                 Seamless Car Imports
             </p>
             
             <!-- Description -->
-            <p class="text-gray-400 text-center max-w-2xl mt-4">
+            <p class="text-gray-300 text-center max-w-2xl mt-6 text-lg">
                 Your trusted partner for importing vehicles to Kenya with ease, transparency, and efficiency. 
-                Access our management systems below.
+                Access our comprehensive management systems below.
             </p>
         </header>
         
         <!-- Dashboard Cards -->
         <main class="mb-16">
-            <h2 class="text-2xl font-bold text-center text-white mb-10">Management Dashboard</h2>
+            <h2 class="text-3xl font-bold text-center text-white mb-12">Management Dashboard</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <!-- Documentation Card -->
                 <a href="https://starksgalaxykenya.github.io/CK-MANAGER/" target="_blank" 
                    class="card-hover card-delay-1 block">
-                    <div class="dashboard-card rounded-2xl shadow-xl overflow-hidden h-full">
-                        <div class="p-7">
-                            <div class="flex items-center justify-center w-18 h-18 rounded-2xl brand-bg mb-7 mx-auto" style="box-shadow: 0 0 20px rgba(19, 125, 15, 0.5);">
+                    <div class="dashboard-card rounded-2xl overflow-hidden h-full">
+                        <div class="p-8">
+                            <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
                                 <i class="fas fa-file-alt text-white text-3xl"></i>
                             </div>
-                            <h3 class="text-2xl font-bold text-white mb-4 text-center">Documentation</h3>
-                            <p class="text-gray-300 mb-6 text-center">
+                            <h3 class="text-2xl font-bold text-white mb-5 text-center">Documentation</h3>
+                            <p class="text-gray-300 mb-7 text-center leading-relaxed">
                                 Access comprehensive import documentation, vehicle tracking, and management system.
                             </p>
                             <div class="flex justify-center">
-                                <span class="inline-flex items-center brand-color font-medium">
-                                    Open System <i class="fas fa-external-link-alt ml-2"></i>
+                                <span class="inline-flex items-center brand-color font-semibold text-lg">
+                                    Open System <i class="fas fa-external-link-alt ml-3"></i>
                                 </span>
                             </div>
                         </div>
-                        <div class="px-7 pb-7">
-                            <div class="flex flex-wrap justify-center gap-2">
-                                <span class="badge text-xs font-medium px-3 py-1.5 rounded-full">Import Forms</span>
-                                <span class="badge text-xs font-medium px-3 py-1.5 rounded-full">Vehicle Tracking</span>
-                                <span class="badge text-xs font-medium px-3 py-1.5 rounded-full">Process Guide</span>
+                        <div class="px-8 pb-8">
+                            <div class="flex flex-wrap justify-center gap-3">
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Import Forms</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Vehicle Tracking</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Process Guide</span>
                             </div>
                         </div>
                     </div>
@@ -218,117 +249,96 @@
                 <!-- Finance Management Card -->
                 <a href="https://starksgalaxykenya.github.io/finance-system-ck/" target="_blank" 
                    class="card-hover card-delay-2 block">
-                    <div class="dashboard-card rounded-2xl shadow-xl overflow-hidden h-full">
-                        <div class="p-7">
-                            <div class="flex items-center justify-center w-18 h-18 rounded-2xl brand-bg mb-7 mx-auto" style="box-shadow: 0 0 20px rgba(19, 125, 15, 0.5);">
+                    <div class="dashboard-card rounded-2xl overflow-hidden h-full">
+                        <div class="p-8">
+                            <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
                                 <i class="fas fa-chart-line text-white text-3xl"></i>
                             </div>
-                            <h3 class="text-2xl font-bold text-white mb-4 text-center">Finance Management</h3>
-                            <p class="text-gray-300 mb-6 text-center">
+                            <h3 class="text-2xl font-bold text-white mb-5 text-center">Finance Management</h3>
+                            <p class="text-gray-300 mb-7 text-center leading-relaxed">
                                 Manage invoices, payments, expenses, and financial reports for your car import business.
                             </p>
                             <div class="flex justify-center">
-                                <span class="inline-flex items-center brand-color font-medium">
-                                    Open System <i class="fas fa-external-link-alt ml-2"></i>
+                                <span class="inline-flex items-center brand-color font-semibold text-lg">
+                                    Open System <i class="fas fa-external-link-alt ml-3"></i>
                                 </span>
                             </div>
                         </div>
-                        <div class="px-7 pb-7">
-                            <div class="flex flex-wrap justify-center gap-2">
-                                <span class="badge text-xs font-medium px-3 py-1.5 rounded-full">Invoicing</span>
-                                <span class="badge text-xs font-medium px-3 py-1.5 rounded-full">Payment Tracking</span>
-                                <span class="badge text-xs font-medium px-3 py-1.5 rounded-full">Financial Reports</span>
+                        <div class="px-8 pb-8">
+                            <div class="flex flex-wrap justify-center gap-3">
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Invoicing</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Payment Tracking</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Financial Reports</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Fleet & Deals Manager Card -->
+                <a href="https://starksgalaxykenya.github.io/CK-FLEET-MANAGER/" target="_blank" 
+                   class="card-hover card-delay-3 block">
+                    <div class="dashboard-card rounded-2xl overflow-hidden h-full">
+                        <div class="p-8">
+                            <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
+                                <i class="fas fa-car text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-5 text-center">FLEET & DEALS MANAGER</h3>
+                            <p class="text-gray-300 mb-7 text-center leading-relaxed">
+                                Manage your vehicle fleet, track deals, and streamline sales operations with our advanced management system.
+                            </p>
+                            <div class="flex justify-center">
+                                <span class="inline-flex items-center brand-color font-semibold text-lg">
+                                    Open System <i class="fas fa-external-link-alt ml-3"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="px-8 pb-8">
+                            <div class="flex flex-wrap justify-center gap-3">
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Fleet Management</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Deal Tracking</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Sales Operations</span>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
-            
-            <!-- Coming Soon Cards -->
-            <div class="mt-20">
-                <h2 class="text-2xl font-bold text-center text-white mb-10">Coming Soon</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-7 max-w-6xl mx-auto">
-                    <!-- Vehicle Tracking Card -->
-                    <div class="coming-soon-card rounded-2xl p-7 transition-all duration-300 hover:transform hover:-translate-y-2">
-                        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-800 mb-6 mx-auto">
-                            <i class="fas fa-satellite-dish text-green-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-3 text-center">Vehicle Tracking</h3>
-                        <p class="text-gray-400 text-sm text-center mb-5">
-                            Real-time GPS tracking of vehicles from port to delivery location with live updates.
-                        </p>
-                        <div class="flex justify-center">
-                            <span class="text-xs text-gray-500 italic">Launching Q2 2024</span>
-                        </div>
-                    </div>
-                    
-                    <!-- HR Management Card -->
-                    <div class="coming-soon-card rounded-2xl p-7 transition-all duration-300 hover:transform hover:-translate-y-2">
-                        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-800 mb-6 mx-auto">
-                            <i class="fas fa-users text-green-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-3 text-center">HR Management</h3>
-                        <p class="text-gray-400 text-sm text-center mb-5">
-                            Complete HR system for employee management, payroll, and performance tracking.
-                        </p>
-                        <div class="flex justify-center">
-                            <span class="text-xs text-gray-500 italic">Launching Q3 2024</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Sales Team Management Card -->
-                    <div class="coming-soon-card rounded-2xl p-7 transition-all duration-300 hover:transform hover:-translate-y-2">
-                        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-800 mb-6 mx-auto">
-                            <i class="fas fa-chart-bar text-green-500 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-3 text-center">Sales Team Management</h3>
-                        <p class="text-gray-400 text-sm text-center mb-5">
-                            Manage sales pipelines, commissions, and team performance with advanced analytics.
-                        </p>
-                        <div class="flex justify-center">
-                            <span class="text-xs text-gray-500 italic">Launching Q3 2024</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </main>
         
         <!-- Footer -->
-        <footer class="mt-16 pt-10 pb-8 footer-bg rounded-2xl border border-gray-800/50">
-            <div class="flex flex-col md:flex-row justify-between items-center px-8">
-                <div class="mb-6 md:mb-0">
+        <footer class="mt-20 pt-12 pb-10 footer-bg rounded-2xl border border-gray-800/60">
+            <div class="flex flex-col md:flex-row justify-between items-center px-10">
+                <div class="mb-8 md:mb-0">
                     <div class="flex items-center">
-                        <div class="w-12 h-12 rounded-full brand-bg flex items-center justify-center mr-4" style="box-shadow: 0 0 15px rgba(19, 125, 15, 0.4);">
-                            <div class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center">
-                                <div class="text-md font-bold brand-color">CK</div>
+                        <div class="w-14 h-14 rounded-full brand-bg flex items-center justify-center mr-5" style="box-shadow: 0 0 20px rgba(19, 125, 15, 0.5);">
+                            <div class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center">
+                                <div class="text-lg font-bold brand-color">CK</div>
                             </div>
                         </div>
                         <div>
-                            <div class="font-bold text-white text-lg">CarsKenya.co.ke</div>
-                            <div class="text-gray-400">Seamless Car Imports</div>
+                            <div class="font-bold text-white text-xl">CarsKenya.co.ke</div>
+                            <div class="text-gray-300 text-lg">Seamless Car Imports</div>
                         </div>
                     </div>
-                    <div class="mt-4 text-gray-500 text-sm">
-                        <p>© 2023 Cars Kenya. All rights reserved.</p>
-                        <p class="mt-1">Software by <span class="font-semibold text-green-500">FortifyAI.International</span></p>
+                    <div class="mt-6 text-gray-400 text-base">
+                        <p>© 2026 Cars Kenya. All rights reserved.</p>
+                        <p class="mt-2">Software by <span class="font-semibold text-green-400">FortifyAI.International</span></p>
                     </div>
                 </div>
                 
                 <div class="text-center md:text-right">
-                    <p class="text-gray-400 mb-4 max-w-md">FortifyAI.International provides cutting-edge AI-powered solutions for business automation and management.</p>
-                    <div class="flex justify-center md:justify-end space-x-5 text-gray-400">
-                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110">
-                            <i class="fab fa-twitter text-xl"></i>
+                    <p class="text-gray-300 mb-6 max-w-md text-lg">FortifyAI.International provides cutting-edge AI-powered solutions for business automation and management.</p>
+                    <div class="flex justify-center md:justify-end space-x-6 text-gray-400">
+                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110 duration-300">
+                            <i class="fab fa-twitter text-2xl"></i>
                         </a>
-                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110">
-                            <i class="fab fa-facebook-f text-xl"></i>
+                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110 duration-300">
+                            <i class="fab fa-facebook-f text-2xl"></i>
                         </a>
-                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110">
-                            <i class="fab fa-instagram text-xl"></i>
+                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110 duration-300">
+                            <i class="fab fa-instagram text-2xl"></i>
                         </a>
-                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110">
-                            <i class="fab fa-linkedin-in text-xl"></i>
+                        <a href="#" class="hover:text-green-500 transition-colors transform hover:scale-110 duration-300">
+                            <i class="fab fa-linkedin-in text-2xl"></i>
                         </a>
                     </div>
                 </div>
@@ -354,7 +364,7 @@
                     ripple.style.cssText = `
                         position: absolute;
                         border-radius: 50%;
-                        background: rgba(19, 125, 15, 0.4);
+                        background: rgba(19, 125, 15, 0.5);
                         transform: scale(0);
                         animation: ripple-animation 0.6s linear;
                         width: ${size}px;
@@ -374,32 +384,6 @@
                         ripple.remove();
                     }, 600);
                 });
-            });
-            
-            // Add animation for coming soon cards
-            const comingSoonCards = document.querySelectorAll('.coming-soon-card');
-            
-            comingSoonCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.borderColor = 'rgba(19, 125, 15, 0.3)';
-                    this.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(19, 125, 15, 0.2)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.borderColor = 'rgba(19, 125, 15, 0.1)';
-                    this.style.boxShadow = 'none';
-                });
-            });
-            
-            // Add glow effect to FortifyAI badge on hover
-            const fortifyBadge = document.querySelector('.fortify-badge');
-            
-            fortifyBadge.addEventListener('mouseenter', function() {
-                this.style.boxShadow = '0 0 25px rgba(19, 125, 15, 0.7)';
-            });
-            
-            fortifyBadge.addEventListener('mouseleave', function() {
-                this.style.boxShadow = '0 0 10px rgba(19, 125, 15, 0.3)';
             });
             
             // Add CSS for ripple animation
@@ -430,6 +414,56 @@
             
             // Start typing after domain animation completes
             setTimeout(typeWriter, 2000);
+            
+            // Add hover effect to feature badges
+            const featureBadges = document.querySelectorAll('.feature-badge');
+            
+            featureBadges.forEach(badge => {
+                badge.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 5px 15px rgba(19, 125, 15, 0.3)';
+                });
+                
+                badge.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+            
+            // Add click animation to FortifyAI badge
+            const fortifyBadge = document.querySelector('.fortify-badge');
+            
+            fortifyBadge.addEventListener('click', function(e) {
+                // Create ripple effect on click
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height) * 2;
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(19, 125, 15, 0.4);
+                    transform: scale(0);
+                    animation: ripple-animation 0.8s linear;
+                    width: ${size}px;
+                    height: ${size}px;
+                    top: ${y}px;
+                    left: ${x}px;
+                    pointer-events: none;
+                    z-index: 1;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                // Remove ripple after animation
+                setTimeout(() => {
+                    ripple.remove();
+                }, 800);
+            });
         });
     </script>
 </body>
