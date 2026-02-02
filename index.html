@@ -861,32 +861,47 @@
                 });
             }
 
-            function openInAppBrowser(url, title = '') {
-                console.log('Opening URL in in-app browser:', url);
-                currentUrl = url;
-                inAppBrowser.classList.remove('hidden');
-                browserLoading.classList.remove('hidden');
-                
-                // Update browser URL display
-                try {
-                    const urlObj = new URL(url);
-                    browserUrl.textContent = urlObj.hostname;
-                } catch {
-                    browserUrl.textContent = url;
-                }
-                
-                // Navigate iframe with proper attributes
-                navigateToUrl(url);
-                
-                // Update history
-                history.current = url;
-                history.back = [];
-                history.forward = [];
-                updateBrowserControls();
-                
-                // Prevent body scroll
-                document.body.style.overflow = 'hidden';
-            }
+           // Replace the openInAppBrowser function with this:
+function openInAppBrowser(url, title = '') {
+    console.log('Opening URL:', url);
+    
+    // For GitHub Pages, it's better to open in new tab due to iframe restrictions
+    // But we can check if we're in standalone mode first
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        // In PWA mode, open in new window with minimal browser UI
+        const features = 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no';
+        window.open(url, '_blank', features);
+        
+        // Show a notification that it opened externally
+        showNotification('Opened in new window');
+    } else {
+        // In browser mode, just open in new tab
+        window.open(url, '_blank');
+    }
+    
+    // Still mark as active for UI consistency
+    document.querySelectorAll('.nav-icon').forEach(icon => {
+        icon.classList.remove('active');
+    });
+    document.querySelector(`.nav-icon[data-app="${title}"]`)?.classList.add('active');
+}
+
+function showNotification(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.innerHTML = `
+        <div style="position: fixed; top: 80px; right: 20px; background: #137D0F; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fas fa-external-link-alt" style="margin-right: 8px;"></i>
+            ${message}
+        </div>
+    `;
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 
             function navigateToUrl(url) {
                 console.log('Navigating to URL:', url);
