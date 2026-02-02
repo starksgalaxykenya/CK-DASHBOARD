@@ -10,9 +10,11 @@
     <!-- Theme Color for Mobile Browsers -->
     <meta name="theme-color" content="#137D0F">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Cars Kenya - Seamless Car Imports</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use proper Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com/3.3.0"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -159,12 +161,6 @@
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(19, 125, 15, 0.2);
         }
         
-        .coming-soon-card {
-            background: rgba(20, 35, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(19, 125, 15, 0.2);
-        }
-        
         .footer-bg {
             background: rgba(15, 30, 15, 0.85);
             backdrop-filter: blur(12px);
@@ -239,60 +235,23 @@
             font-weight: 500;
         }
         
-        /* More Menu */
-        .more-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: rgba(30, 45, 30, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(19, 125, 15, 0.3);
-            border-radius: 12px;
-            padding: 10px;
-            min-width: 200px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-top: 8px;
-            z-index: 1000;
-        }
-        
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            color: #d1d5db;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-        }
-        
-        .menu-item:hover {
-            background: rgba(19, 125, 15, 0.2);
-            color: #fff;
-        }
-        
-        /* In-App Browser Styles */
-        #inAppBrowser {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        .browser-nav-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        
-        .browser-nav-btn:not(:disabled):hover {
-            color: #137D0F;
-        }
-        
-        /* Install Button Animation */
-        .install-btn.pulsing {
-            animation: pulseInstall 2s infinite;
-        }
-        
         /* Adjust main container for navbar */
         .container.mx-auto.px-4.py-8.max-w-6xl {
             padding-top: 80px;
+        }
+        
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #137D0F;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
         }
     </style>
 </head>
@@ -313,7 +272,7 @@
                 
                 <!-- Navigation Icons -->
                 <div class="flex items-center space-x-2 md:space-x-6">
-                    <a href="/CK-DASHBOARD/" class="nav-icon" data-page="home">
+                    <a href="/CK-DASHBOARD/" class="nav-icon active" data-page="home">
                         <i class="fas fa-home text-xl"></i>
                         <span class="nav-text">Home</span>
                     </a>
@@ -338,79 +297,10 @@
                         <i class="fas fa-download text-xl"></i>
                         <span class="nav-text">Install</span>
                     </button>
-                    
-                    <!-- Settings/More Menu -->
-                    <div class="relative">
-                        <button id="moreMenuBtn" class="nav-icon">
-                            <i class="fas fa-ellipsis-h text-xl"></i>
-                            <span class="nav-text">More</span>
-                        </button>
-                        <div id="moreMenu" class="more-menu hidden">
-                            <a href="#" class="menu-item" id="refreshBtn">
-                                <i class="fas fa-sync-alt mr-3"></i>Refresh App
-                            </a>
-                            <a href="#" class="menu-item" id="clearCacheBtn">
-                                <i class="fas fa-trash-alt mr-3"></i>Clear Cache
-                            </a>
-                            <a href="#" class="menu-item" id="offlineModeBtn">
-                                <i class="fas fa-wifi-slash mr-3"></i>Offline Mode
-                            </a>
-                            <div class="border-t border-gray-700 my-2"></div>
-                            <a href="https://www.fortifyai.international" class="menu-item external-link" data-app="fortifyai">
-                                <i class="fas fa-robot mr-3"></i>FortifyAI
-                            </a>
-                            <a href="mailto:support@carskenya.co.ke" class="menu-item">
-                                <i class="fas fa-envelope mr-3"></i>Contact
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </nav>
-
-    <!-- In-App Browser Container -->
-    <div id="inAppBrowser" class="fixed inset-0 bg-gray-900 z-50 hidden flex-col">
-        <!-- Browser Header -->
-        <div class="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700">
-            <div class="flex items-center">
-                <button id="closeBrowser" class="text-gray-400 hover:text-white mr-4">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-                <button id="goBack" class="text-gray-400 hover:text-white mr-3 browser-nav-btn" disabled>
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <button id="goForward" class="text-gray-400 hover:text-white mr-4 browser-nav-btn" disabled>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <div id="browserUrl" class="text-sm text-gray-400 truncate">Loading...</div>
-            </div>
-            <div class="flex items-center">
-                <button id="refreshPage" class="text-gray-400 hover:text-white mr-4 browser-nav-btn">
-                    <i class="fas fa-redo"></i>
-                </button>
-                <button id="openExternal" class="text-gray-400 hover:text-white browser-nav-btn">
-                    <i class="fas fa-external-link-alt"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Browser Content (iframe) -->
-        <div class="flex-1 relative">
-            <iframe id="browserFrame" class="absolute inset-0 w-full h-full border-0" 
-                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-            </iframe>
-            
-            <!-- Loading Overlay -->
-            <div id="browserLoading" class="absolute inset-0 bg-gray-900 flex items-center justify-center">
-                <div class="text-center">
-                    <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <div class="text-white text-lg">Loading...</div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- FortifyAI International Badge -->
@@ -589,48 +479,25 @@
         </footer>
     </div>
     
-       <script>
+    <!-- JavaScript -->
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
-            const inAppBrowser = document.getElementById('inAppBrowser');
-            const browserFrame = document.getElementById('browserFrame');
-            const browserLoading = document.getElementById('browserLoading');
-            const closeBrowser = document.getElementById('closeBrowser');
-            const goBack = document.getElementById('goBack');
-            const goForward = document.getElementById('goForward');
-            const refreshPage = document.getElementById('refreshPage');
-            const openExternal = document.getElementById('openExternal');
-            const browserUrl = document.getElementById('browserUrl');
             const installButton = document.getElementById('installButton');
-            const moreMenuBtn = document.getElementById('moreMenuBtn');
-            const moreMenu = document.getElementById('moreMenu');
-            const refreshBtn = document.getElementById('refreshBtn');
-            const clearCacheBtn = document.getElementById('clearCacheBtn');
-            const offlineModeBtn = document.getElementById('offlineModeBtn');
             
             // Variables
-            let currentUrl = '';
             let deferredPrompt = null;
-            let isOfflineMode = false;
-            const history = {
-                back: [],
-                forward: [],
-                current: null
-            };
 
-            // Initialize
+            // Initialize App
             initApp();
             
-            // 1. Initialize App
             function initApp() {
                 initPWA();
                 setupNavigation();
-                setupInAppBrowser();
-                setupMoreMenu();
                 setupExistingEffects();
             }
 
-            // 2. PWA Initialization
+            // 1. PWA Initialization
             function initPWA() {
                 // Register Service Worker
                 if ('serviceWorker' in navigator) {
@@ -645,6 +512,7 @@
 
                 // Listen for app installation
                 window.addEventListener('beforeinstallprompt', (e) => {
+                    console.log('beforeinstallprompt event fired');
                     e.preventDefault();
                     deferredPrompt = e;
                     showInstallButton();
@@ -654,6 +522,7 @@
                     console.log('PWA installed successfully');
                     hideInstallButton();
                     deferredPrompt = null;
+                    showNotification('App installed successfully!');
                 });
 
                 // Check if already installed
@@ -663,7 +532,7 @@
                 }
             }
 
-            // 3. Navigation Setup
+            // 2. Navigation Setup - SIMPLIFIED VERSION
             function setupNavigation() {
                 // Handle external link clicks
                 document.querySelectorAll('.external-link').forEach(link => {
@@ -672,7 +541,7 @@
                         const url = this.getAttribute('href');
                         const appName = this.getAttribute('data-app');
                         
-                        console.log('Opening in-app browser:', url);
+                        console.log('Opening URL:', url);
                         
                         // Mark active nav item
                         document.querySelectorAll('.nav-icon').forEach(icon => {
@@ -682,15 +551,14 @@
                             this.classList.add('active');
                         }
                         
-                        // Open in in-app browser
-                        openInAppBrowser(url, appName);
+                        // Open URL with optimized behavior for PWA
+                        openExternalLink(url, appName);
                     });
                 });
 
                 // Home button
                 document.querySelector('a[data-page="home"]').addEventListener('click', function(e) {
                     e.preventDefault();
-                    closeInAppBrowser();
                     
                     // Mark home as active
                     document.querySelectorAll('.nav-icon').forEach(icon => {
@@ -707,312 +575,57 @@
                     installButton.addEventListener('click', async () => {
                         if (!deferredPrompt) return;
                         
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        
-                        if (outcome === 'accepted') {
-                            console.log('User accepted the install prompt');
+                        try {
+                            deferredPrompt.prompt();
+                            const { outcome } = await deferredPrompt.userChoice;
+                            
+                            if (outcome === 'accepted') {
+                                console.log('User accepted the install prompt');
+                                showNotification('Installing app...');
+                            } else {
+                                console.log('User dismissed the install prompt');
+                            }
+                            
+                            deferredPrompt = null;
                             hideInstallButton();
-                        } else {
-                            console.log('User dismissed the install prompt');
+                        } catch (error) {
+                            console.error('Error installing app:', error);
                         }
-                        
-                        deferredPrompt = null;
                     });
                 }
             }
 
-            // 4. In-App Browser Functions - FIXED VERSION
-            function setupInAppBrowser() {
-                // Browser controls
-                closeBrowser.addEventListener('click', closeInAppBrowser);
+            // 3. Open External Links with Smart Behavior
+            function openExternalLink(url, appName) {
+                // Check if we're in PWA standalone mode
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
                 
-                goBack.addEventListener('click', () => {
-                    if (history.back.length > 0) {
-                        history.forward.push(history.current);
-                        history.current = history.back.pop();
-                        navigateToUrl(history.current);
-                        updateBrowserControls();
-                    }
-                });
-                
-                goForward.addEventListener('click', () => {
-                    if (history.forward.length > 0) {
-                        history.back.push(history.current);
-                        history.current = history.forward.pop();
-                        navigateToUrl(history.current);
-                        updateBrowserControls();
-                    }
-                });
-                
-                refreshPage.addEventListener('click', () => {
-                    if (browserFrame.src && browserFrame.src !== 'about:blank') {
-                        browserLoading.classList.remove('hidden');
-                        browserFrame.src = browserFrame.src;
-                    }
-                });
-                
-                openExternal.addEventListener('click', () => {
-                    if (currentUrl) {
-                        window.open(currentUrl, '_blank');
-                        closeInAppBrowser();
-                    }
-                });
-
-                // Iframe load events
-                browserFrame.addEventListener('load', handleIframeLoad);
-                browserFrame.addEventListener('error', handleIframeError);
-            }
-
-            function handleIframeLoad() {
-                console.log('Iframe loaded successfully');
-                browserLoading.classList.add('hidden');
-                
-                try {
-                    // Try to get iframe URL (might fail due to CORS)
-                    let iframeUrl;
-                    try {
-                        iframeUrl = browserFrame.contentWindow.location.href;
-                    } catch (e) {
-                        // CORS error - use the src attribute instead
-                        iframeUrl = browserFrame.src;
-                        console.log('CORS restriction, using src attribute:', iframeUrl);
-                    }
+                if (isStandalone) {
+                    // In PWA mode, open in new window with minimal browser UI
+                    showNotification(`Opening ${appName || 'link'}...`);
                     
-                    updateBrowserUrl(iframeUrl);
-                    
-                    // Add to history
-                    if (history.current !== iframeUrl) {
-                        if (history.current) {
-                            history.back.push(history.current);
-                        }
-                        history.current = iframeUrl;
-                        history.forward = [];
-                        updateBrowserControls();
-                    }
-                } catch (e) {
-                    console.error('Error handling iframe load:', e);
-                    browserLoading.classList.add('hidden');
-                }
-            }
-
-            function handleIframeError() {
-                console.error('Iframe failed to load');
-                browserLoading.classList.add('hidden');
-                
-                // Show error message
-                browserFrame.srcdoc = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            body {
-                                background: #1a3a1a;
-                                color: white;
-                                font-family: 'Inter', sans-serif;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                height: 100vh;
-                                text-align: center;
-                                padding: 20px;
-                            }
-                            .error-container {
-                                max-width: 500px;
-                            }
-                            h1 {
-                                color: #ff6b6b;
-                                margin-bottom: 20px;
-                            }
-                            .icon {
-                                font-size: 60px;
-                                margin-bottom: 20px;
-                                color: #ff6b6b;
-                            }
-                            button {
-                                background: #137D0F;
-                                color: white;
-                                border: none;
-                                padding: 10px 20px;
-                                border-radius: 5px;
-                                cursor: pointer;
-                                margin-top: 20px;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="error-container">
-                            <div class="icon">⚠️</div>
-                            <h1>Unable to Load Page</h1>
-                            <p>There was an issue loading this content in the app browser.</p>
-                            <p>This might be due to security restrictions.</p>
-                            <button onclick="window.parent.postMessage('openExternal', '*')">Open in External Browser</button>
-                        </div>
-                    </body>
-                    </html>
-                `;
-                
-                // Listen for message from iframe to open externally
-                window.addEventListener('message', function(event) {
-                    if (event.data === 'openExternal' && currentUrl) {
-                        window.open(currentUrl, '_blank');
-                        closeInAppBrowser();
-                    }
-                });
-            }
-
-           // Replace the openInAppBrowser function with this:
-function openInAppBrowser(url, title = '') {
-    console.log('Opening URL:', url);
-    
-    // For GitHub Pages, it's better to open in new tab due to iframe restrictions
-    // But we can check if we're in standalone mode first
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        // In PWA mode, open in new window with minimal browser UI
-        const features = 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no';
-        window.open(url, '_blank', features);
-        
-        // Show a notification that it opened externally
-        showNotification('Opened in new window');
-    } else {
-        // In browser mode, just open in new tab
-        window.open(url, '_blank');
-    }
-    
-    // Still mark as active for UI consistency
-    document.querySelectorAll('.nav-icon').forEach(icon => {
-        icon.classList.remove('active');
-    });
-    document.querySelector(`.nav-icon[data-app="${title}"]`)?.classList.add('active');
-}
-
-function showNotification(message) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.innerHTML = `
-        <div style="position: fixed; top: 80px; right: 20px; background: #137D0F; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-            <i class="fas fa-external-link-alt" style="margin-right: 8px;"></i>
-            ${message}
-        </div>
-    `;
-    document.body.appendChild(notification);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-            function navigateToUrl(url) {
-                console.log('Navigating to URL:', url);
-                
-                // Set iframe attributes for better compatibility
-                browserFrame.setAttribute('src', url);
-                browserFrame.setAttribute('allow', 'fullscreen');
-                browserFrame.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-                
-                // Clear any previous error content
-                browserFrame.removeAttribute('srcdoc');
-            }
-
-            function closeInAppBrowser() {
-                inAppBrowser.classList.add('hidden');
-                browserFrame.src = 'about:blank';
-                currentUrl = '';
-                browserLoading.classList.add('hidden');
-                
-                // Allow body scroll
-                document.body.style.overflow = '';
-                
-                // Reset active nav to home
-                document.querySelectorAll('.nav-icon').forEach(icon => {
-                    if (icon.getAttribute('data-page') === 'home') {
-                        icon.classList.add('active');
-                    } else {
-                        icon.classList.remove('active');
-                    }
-                });
-            }
-
-            function updateBrowserUrl(url) {
-                try {
-                    const urlObj = new URL(url);
-                    const displayUrl = urlObj.hostname.replace('www.', '');
-                    browserUrl.textContent = displayUrl;
-                } catch {
-                    browserUrl.textContent = url;
-                }
-                currentUrl = url;
-            }
-
-            function updateBrowserControls() {
-                goBack.disabled = history.back.length === 0;
-                goForward.disabled = history.forward.length === 0;
-            }
-
-            // 5. More Menu Functions
-            function setupMoreMenu() {
-                // Toggle more menu
-                moreMenuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    moreMenu.classList.toggle('hidden');
-                });
-
-                // Close menu when clicking outside
-                document.addEventListener('click', () => {
-                    moreMenu.classList.add('hidden');
-                });
-
-                // Refresh app
-                if (refreshBtn) {
-                    refreshBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-                            window.location.reload();
-                        } else {
-                            window.location.reload();
-                        }
-                    });
-                }
-
-                // Clear cache
-                if (clearCacheBtn) {
-                    clearCacheBtn.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        if ('caches' in window) {
-                            try {
-                                const cacheNames = await caches.keys();
-                                await Promise.all(cacheNames.map(name => caches.delete(name)));
-                                alert('Cache cleared successfully! The app will reload.');
-                                window.location.reload();
-                            } catch (error) {
-                                console.error('Error clearing cache:', error);
-                                alert('Error clearing cache. Please try again.');
-                            }
-                        } else {
-                            alert('Cache API not supported in this browser.');
-                        }
-                    });
-                }
-
-                // Toggle offline mode
-                if (offlineModeBtn) {
-                    offlineModeBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        isOfflineMode = !isOfflineMode;
-                        offlineModeBtn.innerHTML = isOfflineMode ? 
-                            '<i class="fas fa-wifi mr-3"></i>Online Mode' : 
-                            '<i class="fas fa-wifi-slash mr-3"></i>Offline Mode';
+                    // Wait a moment for notification to show
+                    setTimeout(() => {
+                        const features = [
+                            'width=' + Math.min(1200, window.screen.width),
+                            'height=' + Math.min(800, window.screen.height),
+                            'menubar=no',
+                            'toolbar=no',
+                            'location=no',
+                            'status=no',
+                            'scrollbars=yes',
+                            'resizable=yes'
+                        ].join(',');
                         
-                        alert(isOfflineMode ? 
-                            'Offline mode enabled. Some features may be limited.' : 
-                            'Online mode enabled.');
-                    });
+                        window.open(url, '_blank', features);
+                    }, 300);
+                } else {
+                    // In regular browser mode, open in new tab
+                    window.open(url, '_blank');
                 }
             }
 
-            // 6. Install Button Functions
+            // 4. Install Button Functions
             function showInstallButton() {
                 if (installButton) {
                     installButton.classList.remove('hidden');
@@ -1027,7 +640,32 @@ function showNotification(message) {
                 }
             }
 
-            // 7. Existing Effects
+            // 5. Notification Function
+            function showNotification(message) {
+                // Remove existing notification
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.innerHTML = `
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    ${message}
+                `;
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+
+            // 6. Existing Effects
             function setupExistingEffects() {
                 // Add ripple effect to cards on click
                 const cards = document.querySelectorAll('.card-hover');
@@ -1061,7 +699,9 @@ function showNotification(message) {
                         
                         // Remove ripple after animation
                         setTimeout(() => {
-                            ripple.remove();
+                            if (ripple.parentNode) {
+                                ripple.remove();
+                            }
                         }, 600);
                     });
                 });
@@ -1132,7 +772,9 @@ function showNotification(message) {
                         
                         // Remove ripple after animation
                         setTimeout(() => {
-                            ripple.remove();
+                            if (ripple.parentNode) {
+                                ripple.remove();
+                            }
                         }, 800);
                     });
                 }
