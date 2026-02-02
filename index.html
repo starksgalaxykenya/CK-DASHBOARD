@@ -2,21 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Add these lines in the <head> section after your existing meta tags -->
-<!-- PWA Manifest -->
-<link rel="manifest" href="/CK-DASHBOARD/manifest.json">
-
-<!-- Apple Touch Icon (for iOS devices) -->
-<link rel="apple-touch-icon" href="/CK-DASHBOARD/icons/icon-192x192.png">
-
-<!-- Theme Color for Mobile Browsers -->
-<meta name="theme-color" content="#137D0F">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- Viewport for PWA -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/CK-DASHBOARD/manifest.json">
+    <!-- Apple Touch Icon (for iOS devices) -->
+    <link rel="apple-touch-icon" href="/CK-DASHBOARD/icons/icon-192x192.png">
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#137D0F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Cars Kenya - Seamless Car Imports</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -83,6 +77,33 @@
         @keyframes glow {
             0%, 100% { box-shadow: 0 0 10px rgba(19, 125, 15, 0.3); }
             50% { box-shadow: 0 0 20px rgba(19, 125, 15, 0.6); }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulseInstall {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(19, 125, 15, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(19, 125, 15, 0);
+            }
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
         
         .card-hover {
@@ -179,15 +200,223 @@
             background: linear-gradient(135deg, rgba(19, 125, 15, 0.25), rgba(19, 125, 15, 0.15));
             color: #b8ffb3;
             border: 1px solid rgba(19, 125, 15, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        /* Navigation Styles */
+        .navbar {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .nav-icon:hover {
+            color: #137D0F;
+            background: rgba(19, 125, 15, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-icon.active {
+            color: #137D0F;
+            background: rgba(19, 125, 15, 0.2);
+        }
+        
+        .nav-text {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        
+        /* More Menu */
+        .more-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(30, 45, 30, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(19, 125, 15, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 8px;
+            z-index: 1000;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        
+        .menu-item:hover {
+            background: rgba(19, 125, 15, 0.2);
+            color: #fff;
+        }
+        
+        /* In-App Browser Styles */
+        #inAppBrowser {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .browser-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .browser-nav-btn:not(:disabled):hover {
+            color: #137D0F;
+        }
+        
+        /* Install Button Animation */
+        .install-btn.pulsing {
+            animation: pulseInstall 2s infinite;
+        }
+        
+        /* Adjust main container for navbar */
+        .container.mx-auto.px-4.py-8.max-w-6xl {
+            padding-top: 80px;
         }
     </style>
 </head>
 <body class="min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="navbar fixed top-0 left-0 right-0 z-50 bg-gray-900/90 backdrop-blur-md border-b border-gray-800/60">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full brand-bg flex items-center justify-center mr-3">
+                        <div class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center">
+                            <div class="text-sm font-bold brand-color">CK</div>
+                        </div>
+                    </div>
+                    <span class="font-bold text-white text-lg hidden md:inline">Cars Kenya</span>
+                </div>
+                
+                <!-- Navigation Icons -->
+                <div class="flex items-center space-x-2 md:space-x-6">
+                    <a href="/CK-DASHBOARD/" class="nav-icon" data-page="home">
+                        <i class="fas fa-home text-xl"></i>
+                        <span class="nav-text">Home</span>
+                    </a>
+                    
+                    <a href="https://starksgalaxykenya.github.io/CK-MANAGER/" class="nav-icon external-link" data-app="docs">
+                        <i class="fas fa-file-alt text-xl"></i>
+                        <span class="nav-text">Docs</span>
+                    </a>
+                    
+                    <a href="https://starksgalaxykenya.github.io/finance-system-ck/" class="nav-icon external-link" data-app="finance">
+                        <i class="fas fa-chart-line text-xl"></i>
+                        <span class="nav-text">Finance</span>
+                    </a>
+                    
+                    <a href="https://starksgalaxykenya.github.io/CK-FLEET-MANAGER/" class="nav-icon external-link" data-app="fleet">
+                        <i class="fas fa-car text-xl"></i>
+                        <span class="nav-text">Fleet</span>
+                    </a>
+                    
+                    <!-- Install App Button (will be shown/hidden by JS) -->
+                    <button id="installButton" class="nav-icon install-btn hidden">
+                        <i class="fas fa-download text-xl"></i>
+                        <span class="nav-text">Install</span>
+                    </button>
+                    
+                    <!-- Settings/More Menu -->
+                    <div class="relative">
+                        <button id="moreMenuBtn" class="nav-icon">
+                            <i class="fas fa-ellipsis-h text-xl"></i>
+                            <span class="nav-text">More</span>
+                        </button>
+                        <div id="moreMenu" class="more-menu hidden">
+                            <a href="#" class="menu-item" id="refreshBtn">
+                                <i class="fas fa-sync-alt mr-3"></i>Refresh App
+                            </a>
+                            <a href="#" class="menu-item" id="clearCacheBtn">
+                                <i class="fas fa-trash-alt mr-3"></i>Clear Cache
+                            </a>
+                            <a href="#" class="menu-item" id="offlineModeBtn">
+                                <i class="fas fa-wifi-slash mr-3"></i>Offline Mode
+                            </a>
+                            <div class="border-t border-gray-700 my-2"></div>
+                            <a href="https://www.fortifyai.international" class="menu-item external-link" data-app="fortifyai">
+                                <i class="fas fa-robot mr-3"></i>FortifyAI
+                            </a>
+                            <a href="mailto:support@carskenya.co.ke" class="menu-item">
+                                <i class="fas fa-envelope mr-3"></i>Contact
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- In-App Browser Container -->
+    <div id="inAppBrowser" class="fixed inset-0 bg-gray-900 z-50 hidden flex-col">
+        <!-- Browser Header -->
+        <div class="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700">
+            <div class="flex items-center">
+                <button id="closeBrowser" class="text-gray-400 hover:text-white mr-4">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <button id="goBack" class="text-gray-400 hover:text-white mr-3 browser-nav-btn" disabled>
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button id="goForward" class="text-gray-400 hover:text-white mr-4 browser-nav-btn" disabled>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div id="browserUrl" class="text-sm text-gray-400 truncate">Loading...</div>
+            </div>
+            <div class="flex items-center">
+                <button id="refreshPage" class="text-gray-400 hover:text-white mr-4 browser-nav-btn">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button id="openExternal" class="text-gray-400 hover:text-white browser-nav-btn">
+                    <i class="fas fa-external-link-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Browser Content (iframe) -->
+        <div class="flex-1 relative">
+            <iframe id="browserFrame" class="absolute inset-0 w-full h-full border-0" 
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+            
+            <!-- Loading Overlay -->
+            <div id="browserLoading" class="absolute inset-0 bg-gray-900 flex items-center justify-center">
+                <div class="text-center">
+                    <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <div class="text-white text-lg">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- FortifyAI International Badge -->
         <div class="flex justify-end mb-6">
-            <a href="https://www.fortifyai.international" target="_blank" 
-               class="fortify-badge inline-flex items-center px-5 py-2.5 rounded-full border no-underline">
+            <a href="https://www.fortifyai.international" 
+               class="fortify-badge external-link inline-flex items-center px-5 py-2.5 rounded-full border no-underline" data-app="fortifyai">
                 <div class="w-7 h-7 rounded-full bg-gradient-to-r from-green-600 to-green-400 flex items-center justify-center mr-3">
                     <i class="fas fa-robot text-white text-sm"></i>
                 </div>
@@ -233,8 +462,8 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <!-- Documentation Card -->
-                <a href="https://starksgalaxykenya.github.io/CK-MANAGER/" target="_blank" 
-                   class="card-hover card-delay-1 block">
+                <a href="https://starksgalaxykenya.github.io/CK-MANAGER/" 
+                   class="card-hover card-delay-1 block external-link" data-app="docs">
                     <div class="dashboard-card rounded-2xl overflow-hidden h-full">
                         <div class="p-8">
                             <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
@@ -261,8 +490,8 @@
                 </a>
                 
                 <!-- Finance Management Card -->
-                <a href="https://starksgalaxykenya.github.io/finance-system-ck/" target="_blank" 
-                   class="card-hover card-delay-2 block">
+                <a href="https://starksgalaxykenya.github.io/finance-system-ck/" 
+                   class="card-hover card-delay-2 block external-link" data-app="finance">
                     <div class="dashboard-card rounded-2xl overflow-hidden h-full">
                         <div class="p-8">
                             <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
@@ -289,8 +518,8 @@
                 </a>
                 
                 <!-- Fleet & Deals Manager Card -->
-                <a href="https://starksgalaxykenya.github.io/CK-FLEET-MANAGER/" target="_blank" 
-                   class="card-hover card-delay-3 block">
+                <a href="https://starksgalaxykenya.github.io/CK-FLEET-MANAGER/" 
+                   class="card-hover card-delay-3 block external-link" data-app="fleet">
                     <div class="dashboard-card rounded-2xl overflow-hidden h-full">
                         <div class="p-8">
                             <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
@@ -363,24 +592,421 @@
     <!-- JavaScript for enhanced interactivity -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Add ripple effect to cards on click
-            const cards = document.querySelectorAll('.card-hover');
+            // DOM Elements
+            const inAppBrowser = document.getElementById('inAppBrowser');
+            const browserFrame = document.getElementById('browserFrame');
+            const browserLoading = document.getElementById('browserLoading');
+            const closeBrowser = document.getElementById('closeBrowser');
+            const goBack = document.getElementById('goBack');
+            const goForward = document.getElementById('goForward');
+            const refreshPage = document.getElementById('refreshPage');
+            const openExternal = document.getElementById('openExternal');
+            const browserUrl = document.getElementById('browserUrl');
+            const installButton = document.getElementById('installButton');
+            const moreMenuBtn = document.getElementById('moreMenuBtn');
+            const moreMenu = document.getElementById('moreMenu');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const clearCacheBtn = document.getElementById('clearCacheBtn');
+            const offlineModeBtn = document.getElementById('offlineModeBtn');
             
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    // Create ripple element
+            // Variables
+            let currentUrl = '';
+            let deferredPrompt = null;
+            let isOfflineMode = false;
+            const history = {
+                back: [],
+                forward: [],
+                current: null
+            };
+
+            // Initialize PWA
+            initPWA();
+            
+            // Setup Navigation
+            setupNavigation();
+            
+            // Setup In-App Browser
+            setupInAppBrowser();
+            
+            // Setup More Menu
+            setupMoreMenu();
+
+            // Setup existing effects
+            setupExistingEffects();
+
+            // 1. PWA Initialization
+            function initPWA() {
+                // Register Service Worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js')
+                        .then(registration => {
+                            console.log('Service Worker registered with scope:', registration.scope);
+                            
+                            // Check for updates
+                            registration.addEventListener('updatefound', () => {
+                                const newWorker = registration.installing;
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        showUpdateNotification();
+                                    }
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.log('Service Worker registration failed:', error);
+                        });
+                }
+
+                // Listen for app installation
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    showInstallButton();
+                });
+
+                window.addEventListener('appinstalled', () => {
+                    console.log('PWA installed successfully');
+                    hideInstallButton();
+                    deferredPrompt = null;
+                });
+
+                // Check if already installed
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    console.log('Running in standalone mode');
+                    hideInstallButton();
+                }
+            }
+
+            // 2. Navigation Setup
+            function setupNavigation() {
+                // Handle external link clicks
+                document.querySelectorAll('.external-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = this.getAttribute('href');
+                        const appName = this.getAttribute('data-app');
+                        
+                        // Mark active nav item
+                        document.querySelectorAll('.nav-icon').forEach(icon => {
+                            icon.classList.remove('active');
+                        });
+                        if (this.classList.contains('nav-icon')) {
+                            this.classList.add('active');
+                        }
+                        
+                        // Open in in-app browser
+                        openInAppBrowser(url, appName);
+                    });
+                });
+
+                // Home button
+                document.querySelector('a[data-page="home"]').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeInAppBrowser();
+                    
+                    // Mark home as active
+                    document.querySelectorAll('.nav-icon').forEach(icon => {
+                        icon.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                // Install button
+                installButton.addEventListener('click', async () => {
+                    if (!deferredPrompt) return;
+                    
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        hideInstallButton();
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    
+                    deferredPrompt = null;
+                });
+            }
+
+            // 3. In-App Browser Functions
+            function setupInAppBrowser() {
+                // Browser controls
+                closeBrowser.addEventListener('click', closeInAppBrowser);
+                
+                goBack.addEventListener('click', () => {
+                    if (history.back.length > 0) {
+                        history.forward.push(history.current);
+                        history.current = history.back.pop();
+                        navigateToUrl(history.current);
+                        updateBrowserControls();
+                    }
+                });
+                
+                goForward.addEventListener('click', () => {
+                    if (history.forward.length > 0) {
+                        history.back.push(history.current);
+                        history.current = history.forward.pop();
+                        navigateToUrl(history.current);
+                        updateBrowserControls();
+                    }
+                });
+                
+                refreshPage.addEventListener('click', () => {
+                    if (browserFrame.src) {
+                        browserFrame.src = browserFrame.src;
+                    }
+                });
+                
+                openExternal.addEventListener('click', () => {
+                    if (currentUrl) {
+                        window.open(currentUrl, '_blank');
+                    }
+                });
+
+                // Iframe load events
+                browserFrame.addEventListener('load', () => {
+                    browserLoading.classList.add('hidden');
+                    
+                    try {
+                        const iframeUrl = browserFrame.contentWindow.location.href;
+                        updateBrowserUrl(iframeUrl);
+                        
+                        // Add to history
+                        if (history.current !== iframeUrl) {
+                            if (history.current) {
+                                history.back.push(history.current);
+                            }
+                            history.current = iframeUrl;
+                            history.forward = [];
+                            updateBrowserControls();
+                        }
+                    } catch (e) {
+                        // Cross-origin restriction
+                        console.log('Cannot access iframe URL due to CORS');
+                    }
+                });
+            }
+
+            function openInAppBrowser(url, title = '') {
+                currentUrl = url;
+                inAppBrowser.classList.remove('hidden');
+                browserLoading.classList.remove('hidden');
+                
+                // Update browser URL display
+                try {
+                    const urlObj = new URL(url);
+                    browserUrl.textContent = urlObj.hostname;
+                } catch {
+                    browserUrl.textContent = url;
+                }
+                
+                // Navigate iframe
+                navigateToUrl(url);
+                
+                // Update history
+                history.current = url;
+                history.back = [];
+                history.forward = [];
+                updateBrowserControls();
+                
+                // Prevent body scroll
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeInAppBrowser() {
+                inAppBrowser.classList.add('hidden');
+                browserFrame.src = 'about:blank';
+                currentUrl = '';
+                
+                // Allow body scroll
+                document.body.style.overflow = '';
+                
+                // Reset active nav
+                document.querySelectorAll('.nav-icon').forEach(icon => {
+                    if (icon.getAttribute('data-page') === 'home') {
+                        icon.classList.add('active');
+                    } else {
+                        icon.classList.remove('active');
+                    }
+                });
+            }
+
+            function navigateToUrl(url) {
+                browserFrame.src = url;
+            }
+
+            function updateBrowserUrl(url) {
+                try {
+                    const urlObj = new URL(url);
+                    browserUrl.textContent = urlObj.hostname + (urlObj.pathname.length > 30 ? '...' : urlObj.pathname);
+                } catch {
+                    browserUrl.textContent = url;
+                }
+                currentUrl = url;
+            }
+
+            function updateBrowserControls() {
+                goBack.disabled = history.back.length === 0;
+                goForward.disabled = history.forward.length === 0;
+            }
+
+            // 4. More Menu Functions
+            function setupMoreMenu() {
+                // Toggle more menu
+                moreMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    moreMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', () => {
+                    moreMenu.classList.add('hidden');
+                });
+
+                // Refresh app
+                refreshBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+                        window.location.reload();
+                    }
+                });
+
+                // Clear cache
+                clearCacheBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(name => caches.delete(name)));
+                        alert('Cache cleared successfully!');
+                    }
+                });
+
+                // Toggle offline mode
+                offlineModeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    isOfflineMode = !isOfflineMode;
+                    offlineModeBtn.innerHTML = isOfflineMode ? 
+                        '<i class="fas fa-wifi mr-3"></i>Online Mode' : 
+                        '<i class="fas fa-wifi-slash mr-3"></i>Offline Mode';
+                    
+                    if (isOfflineMode) {
+                        alert('Offline mode enabled. Some features may be limited.');
+                    } else {
+                        alert('Online mode enabled.');
+                    }
+                });
+            }
+
+            // 5. Helper Functions
+            function showInstallButton() {
+                installButton.classList.remove('hidden');
+                installButton.classList.add('pulsing');
+            }
+
+            function hideInstallButton() {
+                installButton.classList.add('hidden');
+                installButton.classList.remove('pulsing');
+            }
+
+            function showUpdateNotification() {
+                if (confirm('A new version is available. Update now?')) {
+                    window.location.reload();
+                }
+            }
+
+            // 6. Setup Existing Effects
+            function setupExistingEffects() {
+                // Add ripple effect to cards on click
+                const cards = document.querySelectorAll('.card-hover');
+                
+                cards.forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        // Create ripple element
+                        const ripple = document.createElement('span');
+                        const rect = card.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
+                        
+                        ripple.style.cssText = `
+                            position: absolute;
+                            border-radius: 50%;
+                            background: rgba(19, 125, 15, 0.5);
+                            transform: scale(0);
+                            animation: ripple-animation 0.6s linear;
+                            width: ${size}px;
+                            height: ${size}px;
+                            top: ${y}px;
+                            left: ${x}px;
+                            pointer-events: none;
+                            z-index: 1;
+                        `;
+                        
+                        card.style.position = 'relative';
+                        card.style.overflow = 'hidden';
+                        card.appendChild(ripple);
+                        
+                        // Remove ripple after animation
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 600);
+                    });
+                });
+
+                // Add typing effect to the tagline
+                const tagline = document.querySelector('.tagline');
+                const originalText = tagline.textContent;
+                tagline.textContent = '';
+                
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < originalText.length) {
+                        tagline.textContent += originalText.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50);
+                    }
+                };
+                
+                // Start typing after domain animation completes
+                setTimeout(typeWriter, 2000);
+                
+                // Add hover effect to feature badges
+                const featureBadges = document.querySelectorAll('.feature-badge');
+                
+                featureBadges.forEach(badge => {
+                    badge.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-2px)';
+                        this.style.boxShadow = '0 5px 15px rgba(19, 125, 15, 0.3)';
+                    });
+                    
+                    badge.addEventListener('mouseleave', function() {
+                        this.style.transform = '';
+                        this.style.boxShadow = '';
+                    });
+                });
+                
+                // Add click animation to FortifyAI badge
+                const fortifyBadge = document.querySelector('.fortify-badge');
+                
+                fortifyBadge.addEventListener('click', function(e) {
+                    // Create ripple effect on click
                     const ripple = document.createElement('span');
-                    const rect = card.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height) * 2;
                     const x = e.clientX - rect.left - size / 2;
                     const y = e.clientY - rect.top - size / 2;
                     
                     ripple.style.cssText = `
                         position: absolute;
                         border-radius: 50%;
-                        background: rgba(19, 125, 15, 0.5);
+                        background: rgba(19, 125, 15, 0.4);
                         transform: scale(0);
-                        animation: ripple-animation 0.6s linear;
+                        animation: ripple-animation 0.8s linear;
                         width: ${size}px;
                         height: ${size}px;
                         top: ${y}px;
@@ -389,154 +1015,17 @@
                         z-index: 1;
                     `;
                     
-                    card.style.position = 'relative';
-                    card.style.overflow = 'hidden';
-                    card.appendChild(ripple);
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
                     
                     // Remove ripple after animation
                     setTimeout(() => {
                         ripple.remove();
-                    }, 600);
+                    }, 800);
                 });
-            });
-            
-            // Add CSS for ripple animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes ripple-animation {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Add typing effect to the tagline
-            const tagline = document.querySelector('.tagline');
-            const originalText = tagline.textContent;
-            tagline.textContent = '';
-            
-            let i = 0;
-            const typeWriter = () => {
-                if (i < originalText.length) {
-                    tagline.textContent += originalText.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 50);
-                }
-            };
-            
-            // Start typing after domain animation completes
-            setTimeout(typeWriter, 2000);
-            
-            // Add hover effect to feature badges
-            const featureBadges = document.querySelectorAll('.feature-badge');
-            
-            featureBadges.forEach(badge => {
-                badge.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                    this.style.boxShadow = '0 5px 15px rgba(19, 125, 15, 0.3)';
-                });
-                
-                badge.addEventListener('mouseleave', function() {
-                    this.style.transform = '';
-                    this.style.boxShadow = '';
-                });
-            });
-            
-            // Add click animation to FortifyAI badge
-            const fortifyBadge = document.querySelector('.fortify-badge');
-            
-            fortifyBadge.addEventListener('click', function(e) {
-                // Create ripple effect on click
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height) * 2;
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.cssText = `
-                    position: absolute;
-                    border-radius: 50%;
-                    background: rgba(19, 125, 15, 0.4);
-                    transform: scale(0);
-                    animation: ripple-animation 0.8s linear;
-                    width: ${size}px;
-                    height: ${size}px;
-                    top: ${y}px;
-                    left: ${x}px;
-                    pointer-events: none;
-                    z-index: 1;
-                `;
-                
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-                this.appendChild(ripple);
-                
-                // Remove ripple after animation
-                setTimeout(() => {
-                    ripple.remove();
-                }, 800);
-            });
+            }
         });
-// PWA Service Worker Registration
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js')
-      .then(function(registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-  });
-}
-
-// Detect if app is launched in standalone mode (installed PWA)
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  console.log('Running in standalone mode');
-  // You can add custom behavior for standalone mode here
-}
-
-// Add beforeinstallprompt event listener for install button
-let deferredPrompt;
-const installButton = document.createElement('button');
-installButton.innerHTML = '📱 Install App';
-installButton.className = 'brand-bg text-white px-6 py-3 rounded-full font-semibold fixed bottom-4 right-4 z-50 hidden';
-installButton.style.boxShadow = '0 4px 12px rgba(19, 125, 15, 0.4)';
-
-document.body.appendChild(installButton);
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
-  e.preventDefault();
-  // Stash the event so it can be triggered later
-  deferredPrompt = e;
-  // Show the install button
-  installButton.classList.remove('hidden');
-  
-  installButton.addEventListener('click', () => {
-    // Show the install prompt
-    deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      } else {
-        console.log('User dismissed the install prompt');
-      }
-      deferredPrompt = null;
-      installButton.classList.add('hidden');
-    });
-  });
-});
-
-// Hide install button when app is already installed
-window.addEventListener('appinstalled', () => {
-  console.log('PWA was installed');
-  installButton.classList.add('hidden');
-  deferredPrompt = null;
-});
-        
     </script>
 </body>
 </html>
