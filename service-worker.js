@@ -2,6 +2,7 @@ const CACHE_NAME = 'cars-kenya-v1.0';
 const urlsToCache = [
   '/CK-DASHBOARD/',
   '/CK-DASHBOARD/index.html',
+  '/CK-DASHBOARD/offline.html',
   '/CK-DASHBOARD/manifest.json',
   // Add other assets you want to cache (CSS, JS, images, etc.)
 ];
