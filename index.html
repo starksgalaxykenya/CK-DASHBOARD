@@ -13,8 +13,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Cars Kenya - Seamless Car Imports</title>
-    <!-- Use proper Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com/3.3.0"></script>
+    <!-- Use Tailwind CSS with better CDN -->
+    <script src="https://unpkg.com/tailwindcss-jit-cdn"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -253,15 +253,44 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             animation: slideIn 0.3s ease-out;
         }
+        
+        /* Tailwind-like utility classes for offline fallback */
+        .hidden { display: none; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .flex-col { flex-direction: column; }
+        .fixed { position: fixed; }
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .z-50 { z-index: 50; }
+        .bg-gray-900 { background-color: rgba(17, 24, 39, 0.9); }
+        .backdrop-blur-md { backdrop-filter: blur(12px); }
+        .border-b { border-bottom-width: 1px; }
+        .border-gray-800 { border-color: rgba(31, 41, 55, 0.6); }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .mr-3 { margin-right: 0.75rem; }
+        .text-white { color: white; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .font-bold { font-weight: 700; }
+        .rounded-full { border-radius: 9999px; }
+        .w-10 { width: 2.5rem; }
+        .h-10 { height: 2.5rem; }
+        .w-9 { width: 2.25rem; }
+        .h-9 { height: 2.25rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
     </style>
 </head>
 <body class="min-h-screen">
     <!-- Navigation Bar -->
-    <nav class="navbar fixed top-0 left-0 right-0 z-50 bg-gray-900/90 backdrop-blur-md border-b border-gray-800/60">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
+    <nav class="navbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(31, 41, 55, 0.6);">
+        <div class="container" style="margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; padding-top: 0.75rem; padding-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
                 <!-- Logo -->
-                <div class="flex items-center">
+                <div style="display: flex; align-items: center;">
                     <div class="w-10 h-10 rounded-full brand-bg flex items-center justify-center mr-3">
                         <div class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center">
                             <div class="text-sm font-bold brand-color">CK</div>
@@ -271,7 +300,7 @@
                 </div>
                 
                 <!-- Navigation Icons -->
-                <div class="flex items-center space-x-2 md:space-x-6">
+                <div style="display: flex; align-items: center; gap: 0.5rem; gap: 1.5rem;">
                     <a href="/CK-DASHBOARD/" class="nav-icon active" data-page="home">
                         <i class="fas fa-home text-xl"></i>
                         <span class="nav-text">Home</span>
@@ -302,7 +331,7 @@
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="container mx-auto px-4 py-8 max-w-6xl" style="padding-top: 80px;">
         <!-- FortifyAI International Badge -->
         <div class="flex justify-end mb-6">
             <a href="https://www.fortifyai.international" 
