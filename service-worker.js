@@ -1,23 +1,27 @@
-// service-worker.js
-const CACHE_NAME = 'cars-kenya-v2.0';
-const DYNAMIC_CACHE = 'cars-kenya-dynamic-v1.0';
+// service-worker.js - SIMPLIFIED VERSION
+const CACHE_NAME = 'cars-kenya-v3.0';
 
+// Only cache essential files
 const urlsToCache = [
   '/CK-DASHBOARD/',
   '/CK-DASHBOARD/index.html',
-  '/CK-DASHBOARD/manifest.json',
-  'https://cdn.tailwindcss.com/3.3.0',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+  '/CK-DASHBOARD/manifest.json'
 ];
 
-// Install event
+// Install event - cache only essential files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Caching app shell');
-        return cache.addAll(urlsToCache);
+        console.log('Caching essential files');
+        // Use cache.add() instead of cache.addAll() to handle failures gracefully
+        return Promise.all(
+          urlsToCache.map(url => {
+            return cache.add(url).catch(error => {
+              console.log(`Failed to cache ${url}:`, error);
+            });
+          })
+        );
       })
       .then(() => self.skipWaiting())
   );
@@ -31,7 +35,7 @@ self.addEventListener('activate', event => {
       caches.keys().then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
-            if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE) {
+            if (cacheName !== CACHE_NAME) {
               console.log('Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
@@ -44,10 +48,16 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch event
+// Fetch event - SIMPLIFIED
 self.addEventListener('fetch', event => {
-  // Skip non-GET requests
+  // Only handle GET requests
   if (event.request.method !== 'GET') return;
+
+  // Skip external resources
+  const url = new URL(event.request.url);
+  if (!url.pathname.startsWith('/CK-DASHBOARD/')) {
+    return; // Let browser handle external resources
+  }
 
   event.respondWith(
     caches.match(event.request)
@@ -61,7 +71,7 @@ self.addEventListener('fetch', event => {
         return fetch(event.request)
           .then(networkResponse => {
             // Don't cache if not a valid response
-            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+            if (!networkResponse || networkResponse.status !== 200) {
               return networkResponse;
             }
             
@@ -69,7 +79,7 @@ self.addEventListener('fetch', event => {
             const responseToCache = networkResponse.clone();
             
             // Cache the new resource
-            caches.open(DYNAMIC_CACHE)
+            caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
               });
@@ -77,18 +87,13 @@ self.addEventListener('fetch', event => {
             return networkResponse;
           })
           .catch(() => {
-            // If fetch fails and it's a page request, return the main page
-            if (event.request.destination === 'document' || 
-                event.request.headers.get('accept').includes('text/html')) {
+            // If fetch fails and it's a page request, return the cached main page
+            if (event.request.headers.get('accept').includes('text/html')) {
               return caches.match('/CK-DASHBOARD/index.html');
             }
-            // Otherwise return offline page for other requests
             return new Response('You are offline', {
               status: 503,
-              statusText: 'Service Unavailable',
-              headers: new Headers({
-                'Content-Type': 'text/plain'
-              })
+              statusText: 'Service Unavailable'
             });
           });
       })
