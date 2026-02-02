@@ -589,8 +589,7 @@
         </footer>
     </div>
     
-    <!-- JavaScript for enhanced interactivity -->
-    <script>
+       <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
             const inAppBrowser = document.getElementById('inAppBrowser');
@@ -619,38 +618,25 @@
                 current: null
             };
 
-            // Initialize PWA
-            initPWA();
+            // Initialize
+            initApp();
             
-            // Setup Navigation
-            setupNavigation();
-            
-            // Setup In-App Browser
-            setupInAppBrowser();
-            
-            // Setup More Menu
-            setupMoreMenu();
+            // 1. Initialize App
+            function initApp() {
+                initPWA();
+                setupNavigation();
+                setupInAppBrowser();
+                setupMoreMenu();
+                setupExistingEffects();
+            }
 
-            // Setup existing effects
-            setupExistingEffects();
-
-            // 1. PWA Initialization
+            // 2. PWA Initialization
             function initPWA() {
                 // Register Service Worker
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js')
                         .then(registration => {
                             console.log('Service Worker registered with scope:', registration.scope);
-                            
-                            // Check for updates
-                            registration.addEventListener('updatefound', () => {
-                                const newWorker = registration.installing;
-                                newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        showUpdateNotification();
-                                    }
-                                });
-                            });
                         })
                         .catch(error => {
                             console.log('Service Worker registration failed:', error);
@@ -677,7 +663,7 @@
                 }
             }
 
-            // 2. Navigation Setup
+            // 3. Navigation Setup
             function setupNavigation() {
                 // Handle external link clicks
                 document.querySelectorAll('.external-link').forEach(link => {
@@ -685,6 +671,8 @@
                         e.preventDefault();
                         const url = this.getAttribute('href');
                         const appName = this.getAttribute('data-app');
+                        
+                        console.log('Opening in-app browser:', url);
                         
                         // Mark active nav item
                         document.querySelectorAll('.nav-icon').forEach(icon => {
@@ -715,24 +703,26 @@
                 });
 
                 // Install button
-                installButton.addEventListener('click', async () => {
-                    if (!deferredPrompt) return;
-                    
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    
-                    if (outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                        hideInstallButton();
-                    } else {
-                        console.log('User dismissed the install prompt');
-                    }
-                    
-                    deferredPrompt = null;
-                });
+                if (installButton) {
+                    installButton.addEventListener('click', async () => {
+                        if (!deferredPrompt) return;
+                        
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        
+                        if (outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                            hideInstallButton();
+                        } else {
+                            console.log('User dismissed the install prompt');
+                        }
+                        
+                        deferredPrompt = null;
+                    });
+                }
             }
 
-            // 3. In-App Browser Functions
+            // 4. In-App Browser Functions - FIXED VERSION
             function setupInAppBrowser() {
                 // Browser controls
                 closeBrowser.addEventListener('click', closeInAppBrowser);
@@ -756,7 +746,8 @@
                 });
                 
                 refreshPage.addEventListener('click', () => {
-                    if (browserFrame.src) {
+                    if (browserFrame.src && browserFrame.src !== 'about:blank') {
+                        browserLoading.classList.remove('hidden');
                         browserFrame.src = browserFrame.src;
                     }
                 });
@@ -764,34 +755,114 @@
                 openExternal.addEventListener('click', () => {
                     if (currentUrl) {
                         window.open(currentUrl, '_blank');
+                        closeInAppBrowser();
                     }
                 });
 
                 // Iframe load events
-                browserFrame.addEventListener('load', () => {
-                    browserLoading.classList.add('hidden');
-                    
+                browserFrame.addEventListener('load', handleIframeLoad);
+                browserFrame.addEventListener('error', handleIframeError);
+            }
+
+            function handleIframeLoad() {
+                console.log('Iframe loaded successfully');
+                browserLoading.classList.add('hidden');
+                
+                try {
+                    // Try to get iframe URL (might fail due to CORS)
+                    let iframeUrl;
                     try {
-                        const iframeUrl = browserFrame.contentWindow.location.href;
-                        updateBrowserUrl(iframeUrl);
-                        
-                        // Add to history
-                        if (history.current !== iframeUrl) {
-                            if (history.current) {
-                                history.back.push(history.current);
-                            }
-                            history.current = iframeUrl;
-                            history.forward = [];
-                            updateBrowserControls();
-                        }
+                        iframeUrl = browserFrame.contentWindow.location.href;
                     } catch (e) {
-                        // Cross-origin restriction
-                        console.log('Cannot access iframe URL due to CORS');
+                        // CORS error - use the src attribute instead
+                        iframeUrl = browserFrame.src;
+                        console.log('CORS restriction, using src attribute:', iframeUrl);
+                    }
+                    
+                    updateBrowserUrl(iframeUrl);
+                    
+                    // Add to history
+                    if (history.current !== iframeUrl) {
+                        if (history.current) {
+                            history.back.push(history.current);
+                        }
+                        history.current = iframeUrl;
+                        history.forward = [];
+                        updateBrowserControls();
+                    }
+                } catch (e) {
+                    console.error('Error handling iframe load:', e);
+                    browserLoading.classList.add('hidden');
+                }
+            }
+
+            function handleIframeError() {
+                console.error('Iframe failed to load');
+                browserLoading.classList.add('hidden');
+                
+                // Show error message
+                browserFrame.srcdoc = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body {
+                                background: #1a3a1a;
+                                color: white;
+                                font-family: 'Inter', sans-serif;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                                text-align: center;
+                                padding: 20px;
+                            }
+                            .error-container {
+                                max-width: 500px;
+                            }
+                            h1 {
+                                color: #ff6b6b;
+                                margin-bottom: 20px;
+                            }
+                            .icon {
+                                font-size: 60px;
+                                margin-bottom: 20px;
+                                color: #ff6b6b;
+                            }
+                            button {
+                                background: #137D0F;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 5px;
+                                cursor: pointer;
+                                margin-top: 20px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="error-container">
+                            <div class="icon">⚠️</div>
+                            <h1>Unable to Load Page</h1>
+                            <p>There was an issue loading this content in the app browser.</p>
+                            <p>This might be due to security restrictions.</p>
+                            <button onclick="window.parent.postMessage('openExternal', '*')">Open in External Browser</button>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                // Listen for message from iframe to open externally
+                window.addEventListener('message', function(event) {
+                    if (event.data === 'openExternal' && currentUrl) {
+                        window.open(currentUrl, '_blank');
+                        closeInAppBrowser();
                     }
                 });
             }
 
             function openInAppBrowser(url, title = '') {
+                console.log('Opening URL in in-app browser:', url);
                 currentUrl = url;
                 inAppBrowser.classList.remove('hidden');
                 browserLoading.classList.remove('hidden');
@@ -804,7 +875,7 @@
                     browserUrl.textContent = url;
                 }
                 
-                // Navigate iframe
+                // Navigate iframe with proper attributes
                 navigateToUrl(url);
                 
                 // Update history
@@ -817,15 +888,28 @@
                 document.body.style.overflow = 'hidden';
             }
 
+            function navigateToUrl(url) {
+                console.log('Navigating to URL:', url);
+                
+                // Set iframe attributes for better compatibility
+                browserFrame.setAttribute('src', url);
+                browserFrame.setAttribute('allow', 'fullscreen');
+                browserFrame.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                
+                // Clear any previous error content
+                browserFrame.removeAttribute('srcdoc');
+            }
+
             function closeInAppBrowser() {
                 inAppBrowser.classList.add('hidden');
                 browserFrame.src = 'about:blank';
                 currentUrl = '';
+                browserLoading.classList.add('hidden');
                 
                 // Allow body scroll
                 document.body.style.overflow = '';
                 
-                // Reset active nav
+                // Reset active nav to home
                 document.querySelectorAll('.nav-icon').forEach(icon => {
                     if (icon.getAttribute('data-page') === 'home') {
                         icon.classList.add('active');
@@ -835,14 +919,11 @@
                 });
             }
 
-            function navigateToUrl(url) {
-                browserFrame.src = url;
-            }
-
             function updateBrowserUrl(url) {
                 try {
                     const urlObj = new URL(url);
-                    browserUrl.textContent = urlObj.hostname + (urlObj.pathname.length > 30 ? '...' : urlObj.pathname);
+                    const displayUrl = urlObj.hostname.replace('www.', '');
+                    browserUrl.textContent = displayUrl;
                 } catch {
                     browserUrl.textContent = url;
                 }
@@ -854,7 +935,7 @@
                 goForward.disabled = history.forward.length === 0;
             }
 
-            // 4. More Menu Functions
+            // 5. More Menu Functions
             function setupMoreMenu() {
                 // Toggle more menu
                 moreMenuBtn.addEventListener('click', (e) => {
@@ -868,58 +949,70 @@
                 });
 
                 // Refresh app
-                refreshBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-                        window.location.reload();
-                    }
-                });
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+                            window.location.reload();
+                        } else {
+                            window.location.reload();
+                        }
+                    });
+                }
 
                 // Clear cache
-                clearCacheBtn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    if ('caches' in window) {
-                        const cacheNames = await caches.keys();
-                        await Promise.all(cacheNames.map(name => caches.delete(name)));
-                        alert('Cache cleared successfully!');
-                    }
-                });
+                if (clearCacheBtn) {
+                    clearCacheBtn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        if ('caches' in window) {
+                            try {
+                                const cacheNames = await caches.keys();
+                                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                                alert('Cache cleared successfully! The app will reload.');
+                                window.location.reload();
+                            } catch (error) {
+                                console.error('Error clearing cache:', error);
+                                alert('Error clearing cache. Please try again.');
+                            }
+                        } else {
+                            alert('Cache API not supported in this browser.');
+                        }
+                    });
+                }
 
                 // Toggle offline mode
-                offlineModeBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    isOfflineMode = !isOfflineMode;
-                    offlineModeBtn.innerHTML = isOfflineMode ? 
-                        '<i class="fas fa-wifi mr-3"></i>Online Mode' : 
-                        '<i class="fas fa-wifi-slash mr-3"></i>Offline Mode';
-                    
-                    if (isOfflineMode) {
-                        alert('Offline mode enabled. Some features may be limited.');
-                    } else {
-                        alert('Online mode enabled.');
-                    }
-                });
-            }
-
-            // 5. Helper Functions
-            function showInstallButton() {
-                installButton.classList.remove('hidden');
-                installButton.classList.add('pulsing');
-            }
-
-            function hideInstallButton() {
-                installButton.classList.add('hidden');
-                installButton.classList.remove('pulsing');
-            }
-
-            function showUpdateNotification() {
-                if (confirm('A new version is available. Update now?')) {
-                    window.location.reload();
+                if (offlineModeBtn) {
+                    offlineModeBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        isOfflineMode = !isOfflineMode;
+                        offlineModeBtn.innerHTML = isOfflineMode ? 
+                            '<i class="fas fa-wifi mr-3"></i>Online Mode' : 
+                            '<i class="fas fa-wifi-slash mr-3"></i>Offline Mode';
+                        
+                        alert(isOfflineMode ? 
+                            'Offline mode enabled. Some features may be limited.' : 
+                            'Online mode enabled.');
+                    });
                 }
             }
 
-            // 6. Setup Existing Effects
+            // 6. Install Button Functions
+            function showInstallButton() {
+                if (installButton) {
+                    installButton.classList.remove('hidden');
+                    installButton.classList.add('pulsing');
+                }
+            }
+
+            function hideInstallButton() {
+                if (installButton) {
+                    installButton.classList.add('hidden');
+                    installButton.classList.remove('pulsing');
+                }
+            }
+
+            // 7. Existing Effects
             function setupExistingEffects() {
                 // Add ripple effect to cards on click
                 const cards = document.querySelectorAll('.card-hover');
@@ -960,20 +1053,22 @@
 
                 // Add typing effect to the tagline
                 const tagline = document.querySelector('.tagline');
-                const originalText = tagline.textContent;
-                tagline.textContent = '';
-                
-                let i = 0;
-                const typeWriter = () => {
-                    if (i < originalText.length) {
-                        tagline.textContent += originalText.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, 50);
-                    }
-                };
-                
-                // Start typing after domain animation completes
-                setTimeout(typeWriter, 2000);
+                if (tagline) {
+                    const originalText = tagline.textContent;
+                    tagline.textContent = '';
+                    
+                    let i = 0;
+                    const typeWriter = () => {
+                        if (i < originalText.length) {
+                            tagline.textContent += originalText.charAt(i);
+                            i++;
+                            setTimeout(typeWriter, 50);
+                        }
+                    };
+                    
+                    // Start typing after domain animation completes
+                    setTimeout(typeWriter, 2000);
+                }
                 
                 // Add hover effect to feature badges
                 const featureBadges = document.querySelectorAll('.feature-badge');
@@ -993,37 +1088,39 @@
                 // Add click animation to FortifyAI badge
                 const fortifyBadge = document.querySelector('.fortify-badge');
                 
-                fortifyBadge.addEventListener('click', function(e) {
-                    // Create ripple effect on click
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height) * 2;
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        border-radius: 50%;
-                        background: rgba(19, 125, 15, 0.4);
-                        transform: scale(0);
-                        animation: ripple-animation 0.8s linear;
-                        width: ${size}px;
-                        height: ${size}px;
-                        top: ${y}px;
-                        left: ${x}px;
-                        pointer-events: none;
-                        z-index: 1;
-                    `;
-                    
-                    this.style.position = 'relative';
-                    this.style.overflow = 'hidden';
-                    this.appendChild(ripple);
-                    
-                    // Remove ripple after animation
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 800);
-                });
+                if (fortifyBadge) {
+                    fortifyBadge.addEventListener('click', function(e) {
+                        // Create ripple effect on click
+                        const ripple = document.createElement('span');
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height) * 2;
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
+                        
+                        ripple.style.cssText = `
+                            position: absolute;
+                            border-radius: 50%;
+                            background: rgba(19, 125, 15, 0.4);
+                            transform: scale(0);
+                            animation: ripple-animation 0.8s linear;
+                            width: ${size}px;
+                            height: ${size}px;
+                            top: ${y}px;
+                            left: ${x}px;
+                            pointer-events: none;
+                            z-index: 1;
+                        `;
+                        
+                        this.style.position = 'relative';
+                        this.style.overflow = 'hidden';
+                        this.appendChild(ripple);
+                        
+                        // Remove ripple after animation
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 800);
+                    });
+                }
             }
         });
     </script>
