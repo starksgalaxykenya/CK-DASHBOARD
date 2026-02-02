@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add these lines in the <head> section after your existing meta tags -->
+<!-- PWA Manifest -->
+<link rel="manifest" href="/CK-DASHBOARD/manifest.json">
+
+<!-- Apple Touch Icon (for iOS devices) -->
+<link rel="apple-touch-icon" href="/CK-DASHBOARD/icons/icon-192x192.png">
+
+<!-- Theme Color for Mobile Browsers -->
+<meta name="theme-color" content="#137D0F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Viewport for PWA -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cars Kenya - Seamless Car Imports</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -465,6 +479,64 @@
                 }, 800);
             });
         });
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js')
+      .then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+}
+
+// Detect if app is launched in standalone mode (installed PWA)
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  console.log('Running in standalone mode');
+  // You can add custom behavior for standalone mode here
+}
+
+// Add beforeinstallprompt event listener for install button
+let deferredPrompt;
+const installButton = document.createElement('button');
+installButton.innerHTML = '📱 Install App';
+installButton.className = 'brand-bg text-white px-6 py-3 rounded-full font-semibold fixed bottom-4 right-4 z-50 hidden';
+installButton.style.boxShadow = '0 4px 12px rgba(19, 125, 15, 0.4)';
+
+document.body.appendChild(installButton);
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the mini-infobar from appearing on mobile
+  e.preventDefault();
+  // Stash the event so it can be triggered later
+  deferredPrompt = e;
+  // Show the install button
+  installButton.classList.remove('hidden');
+  
+  installButton.addEventListener('click', () => {
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      deferredPrompt = null;
+      installButton.classList.add('hidden');
+    });
+  });
+});
+
+// Hide install button when app is already installed
+window.addEventListener('appinstalled', () => {
+  console.log('PWA was installed');
+  installButton.classList.add('hidden');
+  deferredPrompt = null;
+});
+        
     </script>
 </body>
 </html>
