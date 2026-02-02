@@ -1,21 +1,14 @@
+// service-worker.js
 const CACHE_NAME = 'cars-kenya-v2.0';
 const DYNAMIC_CACHE = 'cars-kenya-dynamic-v1.0';
-
-// Define which domains should open in the app
-const APP_DOMAINS = [
-  'starksgalaxykenya.github.io',
-  'carskenya.co.ke',
-  'fortifyai.international'
-];
 
 const urlsToCache = [
   '/CK-DASHBOARD/',
   '/CK-DASHBOARD/index.html',
   '/CK-DASHBOARD/manifest.json',
-  // Add paths to your other systems if they're on same domain
-  '/CK-MANAGER/',
-  '/finance-system-ck/',
-  '/CK-FLEET-MANAGER/',
+  'https://cdn.tailwindcss.com/3.3.0',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
 ];
 
 // Install event
@@ -51,67 +44,55 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Helper function to check if URL should be handled by app
-function shouldOpenInApp(url) {
-  try {
-    const urlObj = new URL(url);
-    // Check if it's one of our app domains
-    return APP_DOMAINS.some(domain => urlObj.hostname.includes(domain));
-  } catch {
-    return false;
-  }
-}
-
-// Fetch event with link handling
+// Fetch event
 self.addEventListener('fetch', event => {
-  const request = event.request;
-  const url = new URL(request.url);
-  
-  // Skip non-GET requests and browser extensions
-  if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
-    return;
-  }
-  
-  // For same-origin requests or our app domains
-  if (url.origin === self.location.origin || shouldOpenInApp(request.url)) {
-    event.respondWith(
-      caches.match(request)
-        .then(cachedResponse => {
-          // Return cached response if available
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          
-          // Otherwise fetch from network
-          return fetch(request)
-            .then(networkResponse => {
-              // Don't cache if not a valid response
-              if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                return networkResponse;
-              }
-              
-              // Clone the response
-              const responseToCache = networkResponse.clone();
-              
-              // Cache the new resource
-              caches.open(DYNAMIC_CACHE)
-                .then(cache => {
-                  cache.put(request, responseToCache);
-                });
-                
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    caches.match(event.request)
+      .then(cachedResponse => {
+        // Return cached response if available
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        
+        // Otherwise fetch from network
+        return fetch(event.request)
+          .then(networkResponse => {
+            // Don't cache if not a valid response
+            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
               return networkResponse;
-            })
-            .catch(() => {
-              // If fetch fails, try to get a fallback
-              if (request.destination === 'document') {
-                return caches.match('/CK-DASHBOARD/index.html');
-              }
-              return new Response('Network error', { status: 408 });
+            }
+            
+            // Clone the response
+            const responseToCache = networkResponse.clone();
+            
+            // Cache the new resource
+            caches.open(DYNAMIC_CACHE)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+              
+            return networkResponse;
+          })
+          .catch(() => {
+            // If fetch fails and it's a page request, return the main page
+            if (event.request.destination === 'document' || 
+                event.request.headers.get('accept').includes('text/html')) {
+              return caches.match('/CK-DASHBOARD/index.html');
+            }
+            // Otherwise return offline page for other requests
+            return new Response('You are offline', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({
+                'Content-Type': 'text/plain'
+              })
             });
-        })
-    );
-  }
-  // For external URLs (not our domains), let browser handle them
+          });
+      })
+  );
 });
 
 // Handle messages from the client
