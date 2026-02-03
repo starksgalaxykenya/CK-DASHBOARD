@@ -1,84 +1,93 @@
-// service-worker.js - SIMPLIFIED VERSION
-const CACHE_NAME = 'cars-kenya-v3.0';
+// service-worker.js - UPDATED VERSION
+const CACHE_NAME = 'cars-kenya-v4.0'; // Increment version
 
-// Only cache essential files
+// Cache ALL critical files
 const urlsToCache = [
   '/CK-DASHBOARD/',
   '/CK-DASHBOARD/index.html',
-  '/CK-DASHBOARD/manifest.json'
+  '/CK-DASHBOARD/manifest.json',
+  '/CK-DASHBOARD/offline.html',
+  'https://unpkg.com/tailwindcss-jit-cdn',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
 ];
 
-// Install event - cache only essential files
+// Install event
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Force activation
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Caching essential files');
-        // Use cache.add() instead of cache.addAll() to handle failures gracefully
-        return Promise.all(
-          urlsToCache.map(url => {
-            return cache.add(url).catch(error => {
-              console.log(`Failed to cache ${url}:`, error);
-            });
-          })
-        );
+        console.log('Caching essential files v4.0');
+        return cache.addAll(urlsToCache).catch(error => {
+          console.log('Cache addAll error:', error);
+        });
       })
-      .then(() => self.skipWaiting())
   );
 });
 
-// Activate event
+// Activate event - Force cleanup
 self.addEventListener('activate', event => {
   event.waitUntil(
     Promise.all([
-      // Clean up old caches
+      // Clean up ALL old caches
       caches.keys().then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
-            if (cacheName !== CACHE_NAME) {
-              console.log('Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
+            console.log('Deleting cache:', cacheName);
+            return caches.delete(cacheName);
           })
         );
       }),
-      // Take control of all clients
+      // Take control immediately
       self.clients.claim()
     ])
   );
 });
 
-// Fetch event - SIMPLIFIED
+// Fetch event - Network first, cache fallback
 self.addEventListener('fetch', event => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
-  // Skip external resources
-  const url = new URL(event.request.url);
-  if (!url.pathname.startsWith('/CK-DASHBOARD/')) {
-    return; // Let browser handle external resources
+  // For HTML pages - try network first
+  if (event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          // Cache the fresh version
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+          return networkResponse;
+        })
+        .catch(() => {
+          // If offline, serve from cache
+          return caches.match(event.request)
+            .then(cachedResponse => {
+              return cachedResponse || caches.match('/CK-DASHBOARD/index.html');
+            });
+        })
+    );
+    return;
   }
 
+  // For other resources - cache first
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Return cached response if available
         if (cachedResponse) {
           return cachedResponse;
         }
         
-        // Otherwise fetch from network
         return fetch(event.request)
           .then(networkResponse => {
-            // Don't cache if not a valid response
             if (!networkResponse || networkResponse.status !== 200) {
               return networkResponse;
             }
             
-            // Clone the response
             const responseToCache = networkResponse.clone();
-            
-            // Cache the new resource
             caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
@@ -87,22 +96,23 @@ self.addEventListener('fetch', event => {
             return networkResponse;
           })
           .catch(() => {
-            // If fetch fails and it's a page request, return the cached main page
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/CK-DASHBOARD/index.html');
+            // Return offline page for navigation requests
+            if (event.request.mode === 'navigate') {
+              return caches.match('/CK-DASHBOARD/offline.html');
             }
-            return new Response('You are offline', {
-              status: 503,
-              statusText: 'Service Unavailable'
+            return new Response('Network error', { 
+              status: 408, 
+              headers: { 'Content-Type': 'text/plain' } 
             });
           });
       })
   );
 });
 
-// Handle messages from the client
+// Force skip waiting on any message
 self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  if (event.data) {
     self.skipWaiting();
+    self.clients.claim();
   }
 });
