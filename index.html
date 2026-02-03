@@ -464,35 +464,35 @@
                     </div>
                 </a>
                 
-                <!-- CK Workspace Card -->
-                <a href="https://starksgalaxykenya.github.io/CK-HR/" 
-                   class="card-hover block external-link" data-app="hr" style="animation: fadeIn 0.5s ease-out 1.7s forwards; opacity: 0;">
-                    <div class="dashboard-card rounded-2xl overflow-hidden h-full">
-                        <div class="p-8">
-                            <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
-                                <i class="fas fa-users text-white text-3xl"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-white mb-5 text-center">CK Workspace</h3>
-                            <p class="text-gray-300 mb-7 text-center leading-relaxed">
-                                Manage employees, HR operations, and workspace features for seamless team collaboration and administration.
-                            </p>
-                            <div class="flex justify-center">
-                                <span class="inline-flex items-center brand-color font-semibold text-lg">
-                                    Open System <i class="fas fa-external-link-alt ml-3"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="px-8 pb-8">
-                            <div class="flex flex-wrap justify-center gap-3">
-                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">HR Management</span>
-                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Employee Portal</span>
-                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Workspace Tools</span>
-                            </div>
-                        </div>
+                       <!-- CK Workspace Card - UPDATED -->
+        <a href="https://starksgalaxykenya.github.io/CK-HR/" 
+           class="card-hover card-delay-3 block external-link" data-app="hr">
+            <div class="dashboard-card rounded-2xl overflow-hidden h-full">
+                <div class="p-8">
+                    <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
+                        <i class="fas fa-users text-white text-3xl"></i>
                     </div>
-                </a>
-            </div>
-        </main>
+                    <h3 class="text-2xl font-bold text-white mb-5 text-center">CK Workspace</h3>
+                    <p class="text-gray-300 mb-7 text-center leading-relaxed">
+                        Manage employees, HR operations, and workspace features for seamless team collaboration and administration.
+                    </p>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center brand-color font-semibold text-lg">
+                            Open System <i class="fas fa-external-link-alt ml-3"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="px-8 pb-8">
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">HR Management</span>
+                        <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Employee Portal</span>
+                        <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Workspace Tools</span>
+                    </div>
+                </div>
+             </div>
+        </a>
+    </div>
+</main>
         
         <!-- Footer -->
         <footer class="mt-20 pt-12 pb-10 footer-bg rounded-2xl border border-gray-800/60">
@@ -836,7 +836,42 @@
                     });
                 }
             }
+
+            // ===== ADD THIS NEW CODE HERE =====
+        // Force update check on load
+        window.addEventListener('load', function() {
+            // Check if service worker is registered
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(registration => {
+                    if (registration) {
+                        // Force update
+                        registration.update();
+                    }
+                });
+            }
+            
+            // Debug: Check if CK Workspace card exists
+            const workspaceCard = document.querySelector('a[data-app="hr"]');
+            if (!workspaceCard) {
+                console.error('CK Workspace card not found in DOM!');
+                // Try to find it another way
+                const allCards = document.querySelectorAll('.grid a');
+                console.log('Found cards:', allCards.length);
+            } else {
+                console.log('CK Workspace card found:', workspaceCard);
+                // Force the animation to play
+                workspaceCard.style.animation = 'fadeIn 0.5s ease-out 1.4s forwards';
+                workspaceCard.style.opacity = '1';
+            }
+            
+            // Also check if the card is in the grid
+            const grid = document.querySelector('.grid');
+            if (grid) {
+                console.log('Grid children:', grid.children.length);
+                // Should show 4 cards
+            }
         });
+        // ===== END OF NEW CODE =====
     </script>
 </body>
 </html>
