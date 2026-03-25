@@ -16,6 +16,28 @@
     <!-- Use Tailwind CSS with better CDN -->
     <script src="https://unpkg.com/tailwindcss-jit-cdn"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuUKCxYx0jYKqWOQaN82K5zFGlQsKQsK0",
+            authDomain: "ck-manager-1abdc.firebaseapp.com",
+            projectId: "ck-manager-1abdc",
+            storageBucket: "ck-manager-1abdc.firebasestorage.app",
+            messagingSenderId: "890017473158",
+            appId: "1:890017473158:web:528e1eebc4b67bd54ca707",
+            measurementId: "G-7Z71W1NSX4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.__CK_FIREBASE = { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, getDoc, setDoc };
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -254,6 +276,64 @@
             animation: slideIn 0.3s ease-out;
         }
         
+        /* Login Modal Styles */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .login-card {
+            background: rgba(30, 45, 30, 0.95);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(19, 125, 15, 0.5);
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            animation: slideIn 0.4s ease-out;
+        }
+        
+        .login-input {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(19, 125, 15, 0.3);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .login-input:focus {
+            outline: none;
+            border-color: #137D0F;
+            box-shadow: 0 0 0 3px rgba(19, 125, 15, 0.2);
+        }
+        
+        .login-button {
+            background: linear-gradient(135deg, #137D0F, #0fa30a);
+            color: white;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(19, 125, 15, 0.3);
+        }
+        
         /* Tailwind-like utility classes for offline fallback */
         .hidden { display: none; }
         .flex { display: flex; }
@@ -286,7 +366,7 @@
 </head>
 <body class="min-h-screen">
     <!-- Navigation Bar -->
-    <nav class="navbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(31, 41, 55, 0.6);">
+    <nav class="navbar" id="mainNavbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(31, 41, 55, 0.6); display: none;">
         <div class="container" style="margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; padding-top: 0.75rem; padding-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <!-- Logo -->
@@ -301,25 +381,30 @@
                 
                 <!-- Navigation Icons -->
                 <div style="display: flex; align-items: center; gap: 0.5rem; gap: 1.5rem;">
-                    <a href="/CK-DASHBOARD/" class="nav-icon active" data-page="home">
+                    <div class="nav-icon active" data-page="home" id="homeNavBtn">
                         <i class="fas fa-home text-xl"></i>
                         <span class="nav-text">Home</span>
-                    </a>
+                    </div>
                     
-                    <a href="https://starksgalaxykenya.github.io/CK-MANAGER/" class="nav-icon external-link" data-app="docs">
+                    <a href="https://starksgalaxykenya.github.io/CK-MANAGER/" class="nav-icon external-link" data-app="docs" id="navDocs">
                         <i class="fas fa-file-alt text-xl"></i>
                         <span class="nav-text">Docs</span>
                     </a>
                     
-                    <a href="https://starksgalaxykenya.github.io/finance-system-ck/" class="nav-icon external-link" data-app="finance">
+                    <a href="https://starksgalaxykenya.github.io/finance-system-ck/" class="nav-icon external-link" data-app="finance" id="navFinance">
                         <i class="fas fa-chart-line text-xl"></i>
                         <span class="nav-text">Finance</span>
                     </a>
                     
-                    <a href="https://starksgalaxykenya.github.io/CK-FLEET-MANAGER/" class="nav-icon external-link" data-app="fleet">
+                    <a href="https://starksgalaxykenya.github.io/CK-FLEET-MANAGER/" class="nav-icon external-link" data-app="fleet" id="navFleet">
                         <i class="fas fa-car text-xl"></i>
                         <span class="nav-text">Fleet</span>
                     </a>
+                    
+                    <div id="logoutBtn" class="nav-icon">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                        <span class="nav-text">Logout</span>
+                    </div>
                     
                     <!-- Install App Button (will be shown/hidden by JS) -->
                     <button id="installButton" class="nav-icon install-btn hidden">
@@ -331,7 +416,34 @@
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl" style="padding-top: 80px;">
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 rounded-full brand-bg mx-auto flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center">
+                        <div class="text-2xl font-bold brand-color">CK</div>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Welcome Back</h2>
+                <p class="text-gray-300 text-sm">Sign in to access Cars Kenya Dashboard</p>
+            </div>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <input type="email" id="loginEmail" class="login-input" placeholder="Email Address" required>
+                </div>
+                <div class="mb-6">
+                    <input type="password" id="loginPassword" class="login-input" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-button">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                </button>
+            </form>
+            <p class="text-center text-gray-500 text-xs mt-6">Secure access for authorized personnel only</p>
+        </div>
+    </div>
+
+    <div id="dashboardContent" class="container mx-auto px-4 py-8 max-w-6xl" style="padding-top: 80px; display: none;">
         <!-- FortifyAI International Badge -->
         <div class="flex justify-end mb-6">
             <a href="https://www.fortifyai.international" 
@@ -464,35 +576,35 @@
                     </div>
                 </a>
                 
-                       <!-- CK Workspace Card - UPDATED -->
-        <a href="https://starksgalaxykenya.github.io/CK-HR/" 
-           class="card-hover card-delay-3 block external-link" data-app="hr">
-            <div class="dashboard-card rounded-2xl overflow-hidden h-full">
-                <div class="p-8">
-                    <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
-                        <i class="fas fa-users text-white text-3xl"></i>
+                <!-- CK Workspace Card -->
+                <a href="https://starksgalaxykenya.github.io/CK-HR/" 
+                   class="card-hover card-delay-3 block external-link" data-app="hr">
+                    <div class="dashboard-card rounded-2xl overflow-hidden h-full">
+                        <div class="p-8">
+                            <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
+                                <i class="fas fa-users text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-5 text-center">CK Workspace</h3>
+                            <p class="text-gray-300 mb-7 text-center leading-relaxed">
+                                Manage employees, HR operations, and workspace features for seamless team collaboration and administration.
+                            </p>
+                            <div class="flex justify-center">
+                                <span class="inline-flex items-center brand-color font-semibold text-lg">
+                                    Open System <i class="fas fa-external-link-alt ml-3"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="px-8 pb-8">
+                            <div class="flex flex-wrap justify-center gap-3">
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">HR Management</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Employee Portal</span>
+                                <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Workspace Tools</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-5 text-center">CK Workspace</h3>
-                    <p class="text-gray-300 mb-7 text-center leading-relaxed">
-                        Manage employees, HR operations, and workspace features for seamless team collaboration and administration.
-                    </p>
-                    <div class="flex justify-center">
-                        <span class="inline-flex items-center brand-color font-semibold text-lg">
-                            Open System <i class="fas fa-external-link-alt ml-3"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class="px-8 pb-8">
-                    <div class="flex flex-wrap justify-center gap-3">
-                        <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">HR Management</span>
-                        <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Employee Portal</span>
-                        <span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">Workspace Tools</span>
-                    </div>
-                </div>
-             </div>
-        </a>
-    </div>
-</main>
+                </a>
+            </div>
+        </main>
         
         <!-- Footer -->
         <footer class="mt-20 pt-12 pb-10 footer-bg rounded-2xl border border-gray-800/60">
@@ -537,341 +649,298 @@
     </div>
     
     <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const installButton = document.getElementById('installButton');
+    <script type="module">
+        import { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, getDoc, setDoc } from './firebase-module.js';
+        
+        // DOM Elements
+        const loginOverlay = document.getElementById('loginOverlay');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const mainNavbar = document.getElementById('mainNavbar');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const homeNavBtn = document.getElementById('homeNavBtn');
+        const installButton = document.getElementById('installButton');
+        
+        let deferredPrompt = null;
+        let currentUser = null;
+
+        // Initialize App
+        async function initApp() {
+            await initPWA();
+            setupNavigation();
+            setupExistingEffects();
             
-            // Variables
-            let deferredPrompt = null;
-
-            // Initialize App
-            initApp();
-            
-            function initApp() {
-                initPWA();
-                setupNavigation();
-                setupExistingEffects();
-            }
-
-            // 1. PWA Initialization
-            function initPWA() {
-                // Register Service Worker
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js')
-                        .then(registration => {
-                            console.log('Service Worker registered with scope:', registration.scope);
-                        })
-                        .catch(error => {
-                            console.log('Service Worker registration failed:', error);
-                        });
+            // Check auth state
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await ensureUserMeta(user);
+                    showDashboard();
+                } else {
+                    hideDashboard();
                 }
-
-                // Listen for app installation
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    console.log('beforeinstallprompt event fired');
-                    e.preventDefault();
-                    deferredPrompt = e;
-                    showInstallButton();
-                });
-
-                window.addEventListener('appinstalled', () => {
-                    console.log('PWA installed successfully');
-                    hideInstallButton();
-                    deferredPrompt = null;
-                    showNotification('App installed successfully!');
-                });
-
-                // Check if already installed
-                if (window.matchMedia('(display-mode: standalone)').matches) {
-                    console.log('Running in standalone mode');
-                    hideInstallButton();
-                }
-            }
-
-            // 2. Navigation Setup - SIMPLIFIED VERSION
-            function setupNavigation() {
-                // Handle external link clicks
-                document.querySelectorAll('.external-link').forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const url = this.getAttribute('href');
-                        const appName = this.getAttribute('data-app');
-                        
-                        console.log('Opening URL:', url);
-                        
-                        // Mark active nav item
-                        document.querySelectorAll('.nav-icon').forEach(icon => {
-                            icon.classList.remove('active');
-                        });
-                        if (this.classList.contains('nav-icon')) {
-                            this.classList.add('active');
-                        }
-                        
-                        // Open URL with optimized behavior for PWA
-                        openExternalLink(url, appName);
+            });
+        }
+        
+        // Ensure user metadata exists
+        async function ensureUserMeta(user) {
+            try {
+                const metaRef = doc(db, "users_meta", user.uid);
+                const metaSnap = await getDoc(metaRef);
+                if (!metaSnap.exists()) {
+                    await setDoc(metaRef, {
+                        email: user.email,
+                        createdAt: new Date().toISOString()
                     });
-                });
+                }
+            } catch (error) {
+                console.log('Error ensuring user meta:', error);
+            }
+        }
+        
+        // Show dashboard after login
+        function showDashboard() {
+            loginOverlay.style.display = 'none';
+            dashboardContent.style.display = 'block';
+            mainNavbar.style.display = 'block';
+            showNotification('Welcome back!');
+        }
+        
+        // Hide dashboard (logged out)
+        function hideDashboard() {
+            loginOverlay.style.display = 'flex';
+            dashboardContent.style.display = 'none';
+            mainNavbar.style.display = 'none';
+        }
+        
+        // PWA Initialization
+        function initPWA() {
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
 
-                // Home button
-                document.querySelector('a[data-page="home"]').addEventListener('click', function(e) {
+            // Listen for app installation
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('beforeinstallprompt event fired');
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallButton();
+            });
+
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA installed successfully');
+                hideInstallButton();
+                deferredPrompt = null;
+                showNotification('App installed successfully!');
+            });
+
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('Running in standalone mode');
+                hideInstallButton();
+            }
+        }
+
+        // Navigation Setup
+        function setupNavigation() {
+            // Handle external link clicks
+            document.querySelectorAll('.external-link').forEach(link => {
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    const url = this.getAttribute('href');
+                    const appName = this.getAttribute('data-app');
+                    console.log('Opening URL:', url);
                     
-                    // Mark home as active
+                    // Mark active nav item
+                    document.querySelectorAll('.nav-icon').forEach(icon => {
+                        icon.classList.remove('active');
+                    });
+                    if (this.classList.contains('nav-icon')) {
+                        this.classList.add('active');
+                    }
+                    
+                    // Open URL with optimized behavior for PWA
+                    openExternalLink(url, appName);
+                });
+            });
+
+            // Home button
+            if (homeNavBtn) {
+                homeNavBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     document.querySelectorAll('.nav-icon').forEach(icon => {
                         icon.classList.remove('active');
                     });
                     this.classList.add('active');
-                    
-                    // Scroll to top
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
-
-                // Install button
-                if (installButton) {
-                    installButton.addEventListener('click', async () => {
-                        if (!deferredPrompt) return;
-                        
-                        try {
-                            deferredPrompt.prompt();
-                            const { outcome } = await deferredPrompt.userChoice;
-                            
-                            if (outcome === 'accepted') {
-                                console.log('User accepted the install prompt');
-                                showNotification('Installing app...');
-                            } else {
-                                console.log('User dismissed the install prompt');
-                            }
-                            
-                            deferredPrompt = null;
-                            hideInstallButton();
-                        } catch (error) {
-                            console.error('Error installing app:', error);
-                        }
-                    });
-                }
             }
 
-            // 3. Open External Links with Smart Behavior
-            function openExternalLink(url, appName) {
-                // Check if we're in PWA standalone mode
-                const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-                
-                if (isStandalone) {
-                    // In PWA mode, open in new window with minimal browser UI
-                    showNotification(`Opening ${appName || 'link'}...`);
+            // Logout button
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        await signOut(auth);
+                        showNotification('Logged out successfully');
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                    }
+                });
+            }
+
+            // Login form
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
                     
-                    // Wait a moment for notification to show
-                    setTimeout(() => {
-                        const features = [
-                            'width=' + Math.min(1200, window.screen.width),
-                            'height=' + Math.min(800, window.screen.height),
-                            'menubar=no',
-                            'toolbar=no',
-                            'location=no',
-                            'status=no',
-                            'scrollbars=yes',
-                            'resizable=yes'
-                        ].join(',');
-                        
-                        window.open(url, '_blank', features);
-                    }, 300);
-                } else {
-                    // In regular browser mode, open in new tab
-                    window.open(url, '_blank');
-                }
+                    try {
+                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        currentUser = userCredential.user;
+                        showNotification('Login successful!');
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        showNotification('Login failed: ' + error.message, true);
+                    }
+                });
             }
 
-            // 4. Install Button Functions
-            function showInstallButton() {
-                if (installButton) {
-                    installButton.classList.remove('hidden');
-                    installButton.classList.add('pulsing');
-                }
+            // Install button
+            if (installButton) {
+                installButton.addEventListener('click', async () => {
+                    if (!deferredPrompt) return;
+                    try {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                            showNotification('Installing app...');
+                        }
+                        deferredPrompt = null;
+                        hideInstallButton();
+                    } catch (error) {
+                        console.error('Error installing app:', error);
+                    }
+                });
             }
+        }
 
-            function hideInstallButton() {
-                if (installButton) {
-                    installButton.classList.add('hidden');
-                    installButton.classList.remove('pulsing');
-                }
-            }
-
-            // 5. Notification Function
-            function showNotification(message) {
-                // Remove existing notification
-                const existingNotification = document.querySelector('.notification');
-                if (existingNotification) {
-                    existingNotification.remove();
-                }
-                
-                // Create notification element
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                notification.innerHTML = `
-                    <i class="fas fa-external-link-alt mr-2"></i>
-                    ${message}
-                `;
-                document.body.appendChild(notification);
-                
-                // Remove after 3 seconds
+        // Open External Links with Smart Behavior
+        function openExternalLink(url, appName) {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            
+            if (isStandalone) {
+                showNotification(`Opening ${appName || 'link'}...`);
                 setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 3000);
-            }
-
-            // 6. Existing Effects
-            function setupExistingEffects() {
-                // Add ripple effect to cards on click
-                const cards = document.querySelectorAll('.card-hover');
-                
-                cards.forEach(card => {
-                    card.addEventListener('click', function(e) {
-                        // Create ripple element
-                        const ripple = document.createElement('span');
-                        const rect = card.getBoundingClientRect();
-                        const size = Math.max(rect.width, rect.height);
-                        const x = e.clientX - rect.left - size / 2;
-                        const y = e.clientY - rect.top - size / 2;
-                        
-                        ripple.style.cssText = `
-                            position: absolute;
-                            border-radius: 50%;
-                            background: rgba(19, 125, 15, 0.5);
-                            transform: scale(0);
-                            animation: ripple-animation 0.6s linear;
-                            width: ${size}px;
-                            height: ${size}px;
-                            top: ${y}px;
-                            left: ${x}px;
-                            pointer-events: none;
-                            z-index: 1;
-                        `;
-                        
-                        card.style.position = 'relative';
-                        card.style.overflow = 'hidden';
-                        card.appendChild(ripple);
-                        
-                        // Remove ripple after animation
-                        setTimeout(() => {
-                            if (ripple.parentNode) {
-                                ripple.remove();
-                            }
-                        }, 600);
-                    });
-                });
-
-                // Add typing effect to the tagline
-                const tagline = document.querySelector('.tagline');
-                if (tagline) {
-                    const originalText = tagline.textContent;
-                    tagline.textContent = '';
-                    
-                    let i = 0;
-                    const typeWriter = () => {
-                        if (i < originalText.length) {
-                            tagline.textContent += originalText.charAt(i);
-                            i++;
-                            setTimeout(typeWriter, 50);
-                        }
-                    };
-                    
-                    // Start typing after domain animation completes
-                    setTimeout(typeWriter, 2000);
-                }
-                
-                // Add hover effect to feature badges
-                const featureBadges = document.querySelectorAll('.feature-badge');
-                
-                featureBadges.forEach(badge => {
-                    badge.addEventListener('mouseenter', function() {
-                        this.style.transform = 'translateY(-2px)';
-                        this.style.boxShadow = '0 5px 15px rgba(19, 125, 15, 0.3)';
-                    });
-                    
-                    badge.addEventListener('mouseleave', function() {
-                        this.style.transform = '';
-                        this.style.boxShadow = '';
-                    });
-                });
-                
-                // Add click animation to FortifyAI badge
-                const fortifyBadge = document.querySelector('.fortify-badge');
-                
-                if (fortifyBadge) {
-                    fortifyBadge.addEventListener('click', function(e) {
-                        // Create ripple effect on click
-                        const ripple = document.createElement('span');
-                        const rect = this.getBoundingClientRect();
-                        const size = Math.max(rect.width, rect.height) * 2;
-                        const x = e.clientX - rect.left - size / 2;
-                        const y = e.clientY - rect.top - size / 2;
-                        
-                        ripple.style.cssText = `
-                            position: absolute;
-                            border-radius: 50%;
-                            background: rgba(19, 125, 15, 0.4);
-                            transform: scale(0);
-                            animation: ripple-animation 0.8s linear;
-                            width: ${size}px;
-                            height: ${size}px;
-                            top: ${y}px;
-                            left: ${x}px;
-                            pointer-events: none;
-                            z-index: 1;
-                        `;
-                        
-                        this.style.position = 'relative';
-                        this.style.overflow = 'hidden';
-                        this.appendChild(ripple);
-                        
-                        // Remove ripple after animation
-                        setTimeout(() => {
-                            if (ripple.parentNode) {
-                                ripple.remove();
-                            }
-                        }, 800);
-                    });
-                }
-            }
-
-            // ===== ADD THIS NEW CODE HERE =====
-        // Force update check on load
-        window.addEventListener('load', function() {
-            // Check if service worker is registered
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistration().then(registration => {
-                    if (registration) {
-                        // Force update
-                        registration.update();
-                    }
-                });
-            }
-            
-            // Debug: Check if CK Workspace card exists
-            const workspaceCard = document.querySelector('a[data-app="hr"]');
-            if (!workspaceCard) {
-                console.error('CK Workspace card not found in DOM!');
-                // Try to find it another way
-                const allCards = document.querySelectorAll('.grid a');
-                console.log('Found cards:', allCards.length);
+                    const features = [
+                        'width=' + Math.min(1200, window.screen.width),
+                        'height=' + Math.min(800, window.screen.height),
+                        'menubar=no',
+                        'toolbar=no',
+                        'location=no',
+                        'status=no',
+                        'scrollbars=yes',
+                        'resizable=yes'
+                    ].join(',');
+                    window.open(url, '_blank', features);
+                }, 300);
             } else {
-                console.log('CK Workspace card found:', workspaceCard);
-                // Force the animation to play
-                workspaceCard.style.animation = 'fadeIn 0.5s ease-out 1.4s forwards';
-                workspaceCard.style.opacity = '1';
+                window.open(url, '_blank');
             }
+        }
+
+        // Install Button Functions
+        function showInstallButton() {
+            if (installButton) {
+                installButton.classList.remove('hidden');
+                installButton.classList.add('pulsing');
+            }
+        }
+
+        function hideInstallButton() {
+            if (installButton) {
+                installButton.classList.add('hidden');
+                installButton.classList.remove('pulsing');
+            }
+        }
+
+        // Notification Function
+        function showNotification(message, isError = false) {
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) existingNotification.remove();
             
-            // Also check if the card is in the grid
-            const grid = document.querySelector('.grid');
-            if (grid) {
-                console.log('Grid children:', grid.children.length);
-                // Should show 4 cards
-            }
-        });
-        // ===== END OF NEW CODE =====
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            if (isError) notification.style.background = '#dc2626';
+            notification.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'} mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) notification.remove();
+            }, 3000);
+        }
+
+        // Existing Effects
+        function setupExistingEffects() {
+            // Add ripple effect to cards on click
+            const cards = document.querySelectorAll('.card-hover');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = card.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(19, 125, 15, 0.5);
+                        transform: scale(0);
+                        animation: ripple-animation 0.6s linear;
+                        width: ${size}px;
+                        height: ${size}px;
+                        top: ${y}px;
+                        left: ${x}px;
+                        pointer-events: none;
+                        z-index: 1;
+                    `;
+                    
+                    card.style.position = 'relative';
+                    card.style.overflow = 'hidden';
+                    card.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        if (ripple.parentNode) ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add hover effect to feature badges
+            const featureBadges = document.querySelectorAll('.feature-badge');
+            featureBadges.forEach(badge => {
+                badge.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 5px 15px rgba(19, 125, 15, 0.3)';
+                });
+                badge.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+        }
+
+        // Start the app
+        initApp();
     </script>
 </body>
 </html>
