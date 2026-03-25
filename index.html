@@ -16,28 +16,6 @@
     <!-- Use Tailwind CSS with better CDN -->
     <script src="https://unpkg.com/tailwindcss-jit-cdn"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCuUKCxYx0jYKqWOQaN82K5zFGlQsKQsK0",
-            authDomain: "ck-manager-1abdc.firebaseapp.com",
-            projectId: "ck-manager-1abdc",
-            storageBucket: "ck-manager-1abdc.firebasestorage.app",
-            messagingSenderId: "890017473158",
-            appId: "1:890017473158:web:528e1eebc4b67bd54ca707",
-            measurementId: "G-7Z71W1NSX4"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        window.__CK_FIREBASE = { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, getDoc, setDoc };
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -648,9 +626,35 @@
         </footer>
     </div>
     
-    <!-- JavaScript -->
+    <!-- Firebase SDK -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            }
+        }
+    </script>
+    
     <script type="module">
-        import { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, getDoc, setDoc } from './firebase-module.js';
+        import { initializeApp } from "firebase/app";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
+        import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuUKCxYx0jYKqWOQaN82K5zFGlQsKQsK0",
+            authDomain: "ck-manager-1abdc.firebaseapp.com",
+            projectId: "ck-manager-1abdc",
+            storageBucket: "ck-manager-1abdc.firebasestorage.app",
+            messagingSenderId: "890017473158",
+            appId: "1:890017473158:web:528e1eebc4b67bd54ca707",
+            measurementId: "G-7Z71W1NSX4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
         
         // DOM Elements
         const loginOverlay = document.getElementById('loginOverlay');
@@ -662,26 +666,23 @@
         const installButton = document.getElementById('installButton');
         
         let deferredPrompt = null;
-        let currentUser = null;
 
-        // Initialize App
-        async function initApp() {
-            await initPWA();
-            setupNavigation();
-            setupExistingEffects();
+        // Show notification
+        function showNotification(message, isError = false) {
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) existingNotification.remove();
             
-            // Check auth state
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    currentUser = user;
-                    await ensureUserMeta(user);
-                    showDashboard();
-                } else {
-                    hideDashboard();
-                }
-            });
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            if (isError) notification.style.background = '#dc2626';
+            notification.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'} mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) notification.remove();
+            }, 3000);
         }
-        
+
         // Ensure user metadata exists
         async function ensureUserMeta(user) {
             try {
@@ -691,6 +692,18 @@
                     await setDoc(metaRef, {
                         email: user.email,
                         createdAt: new Date().toISOString()
+                    });
+                }
+                // Also ensure permissions doc exists
+                const permRef = doc(db, "users_permissions", user.uid);
+                const permSnap = await getDoc(permRef);
+                if (!permSnap.exists()) {
+                    await setDoc(permRef, {
+                        docs: true,
+                        finance: true,
+                        fleet: true,
+                        hr: true,
+                        isAdmin: false
                     });
                 }
             } catch (error) {
@@ -748,6 +761,19 @@
             }
         }
 
+        // Install Button Functions
+        function showInstallButton() {
+            if (installButton) {
+                installButton.classList.remove('hidden');
+            }
+        }
+
+        function hideInstallButton() {
+            if (installButton) {
+                installButton.classList.add('hidden');
+            }
+        }
+
         // Navigation Setup
         function setupNavigation() {
             // Handle external link clicks
@@ -766,8 +792,16 @@
                         this.classList.add('active');
                     }
                     
-                    // Open URL with optimized behavior for PWA
-                    openExternalLink(url, appName);
+                    // Open URL
+                    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+                    if (isStandalone) {
+                        showNotification(`Opening ${appName || 'link'}...`);
+                        setTimeout(() => {
+                            window.open(url, '_blank');
+                        }, 300);
+                    } else {
+                        window.open(url, '_blank');
+                    }
                 });
             });
 
@@ -780,36 +814,6 @@
                     });
                     this.classList.add('active');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            }
-
-            // Logout button
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                    try {
-                        await signOut(auth);
-                        showNotification('Logged out successfully');
-                    } catch (error) {
-                        console.error('Logout error:', error);
-                    }
-                });
-            }
-
-            // Login form
-            if (loginForm) {
-                loginForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById('loginEmail').value;
-                    const password = document.getElementById('loginPassword').value;
-                    
-                    try {
-                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                        currentUser = userCredential.user;
-                        showNotification('Login successful!');
-                    } catch (error) {
-                        console.error('Login error:', error);
-                        showNotification('Login failed: ' + error.message, true);
-                    }
                 });
             }
 
@@ -833,62 +837,7 @@
             }
         }
 
-        // Open External Links with Smart Behavior
-        function openExternalLink(url, appName) {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-            
-            if (isStandalone) {
-                showNotification(`Opening ${appName || 'link'}...`);
-                setTimeout(() => {
-                    const features = [
-                        'width=' + Math.min(1200, window.screen.width),
-                        'height=' + Math.min(800, window.screen.height),
-                        'menubar=no',
-                        'toolbar=no',
-                        'location=no',
-                        'status=no',
-                        'scrollbars=yes',
-                        'resizable=yes'
-                    ].join(',');
-                    window.open(url, '_blank', features);
-                }, 300);
-            } else {
-                window.open(url, '_blank');
-            }
-        }
-
-        // Install Button Functions
-        function showInstallButton() {
-            if (installButton) {
-                installButton.classList.remove('hidden');
-                installButton.classList.add('pulsing');
-            }
-        }
-
-        function hideInstallButton() {
-            if (installButton) {
-                installButton.classList.add('hidden');
-                installButton.classList.remove('pulsing');
-            }
-        }
-
-        // Notification Function
-        function showNotification(message, isError = false) {
-            const existingNotification = document.querySelector('.notification');
-            if (existingNotification) existingNotification.remove();
-            
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            if (isError) notification.style.background = '#dc2626';
-            notification.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'} mr-2"></i>${message}`;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (notification.parentNode) notification.remove();
-            }, 3000);
-        }
-
-        // Existing Effects
+        // Setup existing effects
         function setupExistingEffects() {
             // Add ripple effect to cards on click
             const cards = document.querySelectorAll('.card-hover');
@@ -939,8 +888,61 @@
             });
         }
 
-        // Start the app
-        initApp();
+        // Login handler
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    await ensureUserMeta(userCredential.user);
+                    showNotification('Login successful!');
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showNotification('Login failed: ' + error.message, true);
+                }
+            });
+        }
+
+        // Logout handler
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    showNotification('Logged out successfully');
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            });
+        }
+
+        // Auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await ensureUserMeta(user);
+                showDashboard();
+            } else {
+                hideDashboard();
+            }
+        });
+
+        // Initialize app
+        initPWA();
+        setupNavigation();
+        setupExistingEffects();
+        
+        // Force update check on load
+        window.addEventListener('load', function() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(registration => {
+                    if (registration) {
+                        registration.update();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
