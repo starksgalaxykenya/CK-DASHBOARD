@@ -101,13 +101,6 @@
             }
         }
         
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-        
         .card-hover {
             transition: all 0.3s ease;
         }
@@ -124,21 +117,6 @@
         
         .logo-container {
             animation: float 6s ease-in-out infinite;
-        }
-        
-        .card-delay-1 {
-            animation: fadeIn 0.5s ease-out 0.8s forwards;
-            opacity: 0;
-        }
-        
-        .card-delay-2 {
-            animation: fadeIn 0.5s ease-out 1.1s forwards;
-            opacity: 0;
-        }
-        
-        .card-delay-3 {
-            animation: fadeIn 0.5s ease-out 1.4s forwards;
-            opacity: 0;
         }
         
         .tagline {
@@ -199,29 +177,42 @@
             transition: all 0.3s ease;
         }
         
-        /* Navigation Styles */
+        /* COMPRESSED NAVBAR - side by side icons, reduced height */
         .navbar {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+            height: 56px;
+            transition: all 0.2s ease;
         }
         
         .nav-icon {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
+            gap: 6px;
             color: #9ca3af;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
+            padding: 6px 12px;
+            border-radius: 24px;
+            transition: all 0.2s ease;
             position: relative;
             cursor: pointer;
         }
         
+        .nav-icon i {
+            font-size: 1.2rem;
+        }
+        
+        .nav-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0;
+        }
+        
         .nav-icon:hover {
             color: #137D0F;
-            background: rgba(19, 125, 15, 0.1);
-            transform: translateY(-2px);
+            background: rgba(19, 125, 15, 0.15);
+            transform: translateY(-1px);
         }
         
         .nav-icon.active {
@@ -229,32 +220,27 @@
             background: rgba(19, 125, 15, 0.2);
         }
         
-        .nav-text {
-            font-size: 0.75rem;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-        
-        /* Adjust main container for navbar */
+        /* Adjust main container for compressed navbar */
         .container.mx-auto.px-4.py-8.max-w-6xl {
-            padding-top: 80px;
+            padding-top: 72px;
         }
         
         /* Notification styles */
         .notification {
             position: fixed;
-            top: 80px;
+            top: 72px;
             right: 20px;
             background: #137D0F;
             color: white;
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 8px;
             z-index: 9999;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             animation: slideIn 0.3s ease-out;
+            font-size: 0.9rem;
         }
         
-        /* Login Modal Styles */
+        /* Login Modal Styles - FIXED INPUT VISIBILITY */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -274,9 +260,9 @@
             background: rgba(30, 45, 30, 0.98);
             border: 1px solid rgba(19, 125, 15, 0.5);
             border-radius: 2rem;
-            padding: 2.5rem;
+            padding: 2rem;
             width: 90%;
-            max-width: 450px;
+            max-width: 420px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             animation: fadeIn 0.4s ease-out;
         }
@@ -284,18 +270,37 @@
         .login-input {
             width: 100%;
             padding: 12px 16px;
-            background: rgba(17, 24, 39, 0.8);
-            border: 1px solid rgba(19, 125, 15, 0.3);
+            background: rgba(30, 35, 45, 0.9);
+            border: 1px solid rgba(19, 125, 15, 0.5);
             border-radius: 12px;
-            color: white;
+            color: #ffffff;
             font-size: 1rem;
             outline: none;
             transition: all 0.2s;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
         
         .login-input:focus {
             border-color: #137D0F;
-            box-shadow: 0 0 0 2px rgba(19,125,15,0.3);
+            box-shadow: 0 0 0 3px rgba(19,125,15,0.4);
+            background: rgba(20, 28, 40, 0.95);
+        }
+        
+        .login-input::placeholder {
+            color: #a0b0c0;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .login-input:-webkit-autofill,
+        .login-input:-webkit-autofill:hover,
+        .login-input:-webkit-autofill:focus,
+        .login-input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #1e2a2e inset !important;
+            -webkit-text-fill-color: #ffffff !important;
+            box-shadow: 0 0 0 30px #1e2a2e inset !important;
+            caret-color: #ffffff;
         }
         
         .login-btn {
@@ -316,8 +321,8 @@
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: #137D0F;
             display: flex;
@@ -327,21 +332,25 @@
             transition: all 0.2s;
         }
         
+        .user-avatar i {
+            font-size: 1.1rem;
+        }
+        
         .user-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(19,125,15,0.5);
+            transform: scale(1.03);
+            box-shadow: 0 0 12px rgba(19,125,15,0.5);
         }
         
         .logout-dropdown {
             position: absolute;
-            top: 60px;
-            right: 20px;
+            top: 48px;
+            right: 0;
             background: rgba(30,45,30,0.98);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(19,125,15,0.3);
             border-radius: 12px;
-            padding: 10px 0;
-            min-width: 180px;
+            padding: 8px 0;
+            min-width: 160px;
             z-index: 100;
             display: none;
         }
@@ -352,10 +361,11 @@
         }
         
         .logout-item {
-            padding: 10px 20px;
+            padding: 10px 18px;
             color: #e5e5e5;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.9rem;
         }
         
         .logout-item:hover {
@@ -363,78 +373,81 @@
             color: #fff;
         }
         
-        /* Tailwind-like utility classes for offline fallback */
+        /* Logo area in navbar compressed */
+        .navbar-logo-icon {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .navbar-logo-inner {
+            width: 32px;
+            height: 32px;
+        }
+        
+        .navbar-brand-text {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        /* Tailwind-like utility classes */
         .hidden { display: none; }
         .flex { display: flex; }
         .items-center { align-items: center; }
         .justify-center { justify-content: center; }
         .justify-between { justify-content: space-between; }
-        .flex-col { flex-direction: column; }
-        .fixed { position: fixed; }
-        .absolute { position: absolute; }
         .relative { position: relative; }
-        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-        .z-50 { z-index: 50; }
-        .bg-gray-900 { background-color: rgba(17, 24, 39, 0.9); }
-        .backdrop-blur-md { backdrop-filter: blur(12px); }
-        .border-b { border-bottom-width: 1px; }
-        .border-gray-800 { border-color: rgba(31, 41, 55, 0.6); }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .mr-3 { margin-right: 0.75rem; }
         .text-white { color: white; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .font-bold { font-weight: 700; }
+        .text-sm { font-size: 0.875rem; }
         .rounded-full { border-radius: 9999px; }
-        .w-10 { width: 2.5rem; }
-        .h-10 { height: 2.5rem; }
-        .w-9 { width: 2.25rem; }
-        .h-9 { height: 2.25rem; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .gap-1 { gap: 0.25rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .ml-2 { margin-left: 0.5rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Navigation Bar -->
-    <nav class="navbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(31, 41, 55, 0.6);">
-        <div class="container" style="margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; padding-top: 0.75rem; padding-bottom: 0.75rem;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <!-- Logo -->
-                <div style="display: flex; align-items: center;">
-                    <div class="w-10 h-10 rounded-full brand-bg flex items-center justify-center mr-3">
-                        <div class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center">
-                            <div class="text-sm font-bold brand-color">CK</div>
-                        </div>
+    <!-- COMPRESSED NAVIGATION BAR - Side by side icons, reduced height -->
+    <nav class="navbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(17, 24, 39, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(31, 41, 55, 0.5); height: 56px;">
+        <div class="container" style="margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; height: 100%; display: flex; align-items: center; justify-content: space-between;">
+            <!-- Logo - Compact -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="navbar-logo-icon rounded-full brand-bg flex items-center justify-center" style="width: 36px; height: 36px;">
+                    <div class="navbar-logo-inner rounded-full bg-gray-900 flex items-center justify-center" style="width: 32px; height: 32px;">
+                        <div class="text-sm font-bold brand-color">CK</div>
                     </div>
-                    <span class="font-bold text-white text-lg hidden md:inline">Cars Kenya</span>
                 </div>
+                <span class="font-bold text-white navbar-brand-text hidden sm:inline">Cars Kenya</span>
+            </div>
+            
+            <!-- Navigation Icons - HORIZONTAL, side by side, no stacking -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <a href="#" class="nav-icon active" data-page="home" style="display: flex; flex-direction: row; align-items: center; gap: 5px;">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Home</span>
+                </a>
                 
-                <!-- Navigation Icons + User Avatar -->
-                <div style="display: flex; align-items: center; gap: 0.5rem; gap: 1.5rem;">
-                    <a href="#" class="nav-icon active" data-page="home">
-                        <i class="fas fa-home text-xl"></i>
-                        <span class="nav-text">Home</span>
-                    </a>
-                    
-                    <!-- Dynamic App Links will be shown based on permissions, but placeholder structure exists -->
-                    <div id="dynamicNavLinks"></div>
-                    
-                    <!-- Install App Button (will be shown/hidden by JS) -->
-                    <button id="installButton" class="nav-icon install-btn hidden">
-                        <i class="fas fa-download text-xl"></i>
-                        <span class="nav-text">Install</span>
-                    </button>
-                    
-                    <!-- User Avatar / Login Area -->
-                    <div id="userArea" class="relative">
-                        <div id="userAvatarBtn" class="user-avatar hidden">
-                            <i class="fas fa-user text-white text-lg"></i>
-                        </div>
-                        <div id="loginAvatarBtn" class="user-avatar" style="background: #2d6a2d;">
-                            <i class="fas fa-sign-in-alt text-white"></i>
-                        </div>
-                        <div id="logoutDropdown" class="logout-dropdown">
-                            <div id="logoutBtn" class="logout-item"><i class="fas fa-sign-out-alt mr-2"></i> Logout</div>
-                        </div>
+                <!-- Dynamic App Links (horizontal) -->
+                <div id="dynamicNavLinks" style="display: flex; align-items: center; gap: 6px;"></div>
+                
+                <!-- Install App Button -->
+                <button id="installButton" class="nav-icon install-btn hidden" style="display: flex; flex-direction: row; align-items: center; gap: 5px;">
+                    <i class="fas fa-download"></i>
+                    <span class="nav-text">Install</span>
+                </button>
+                
+                <!-- User Avatar / Login Area -->
+                <div id="userArea" class="relative" style="margin-left: 4px;">
+                    <div id="userAvatarBtn" class="user-avatar hidden" style="width: 36px; height: 36px;">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div id="loginAvatarBtn" class="user-avatar" style="background: #2d6a2d; width: 36px; height: 36px;">
+                        <i class="fas fa-sign-in-alt text-white"></i>
+                    </div>
+                    <div id="logoutDropdown" class="logout-dropdown">
+                        <div id="logoutBtn" class="logout-item"><i class="fas fa-sign-out-alt mr-2"></i> Logout</div>
                     </div>
                 </div>
             </div>
@@ -444,99 +457,99 @@
     <!-- Login Modal Overlay -->
     <div id="loginModal" class="login-overlay hidden">
         <div class="login-card">
-            <div class="text-center mb-6">
-                <div class="w-20 h-20 rounded-full brand-bg mx-auto flex items-center justify-center mb-4">
-                    <i class="fas fa-lock text-white text-3xl"></i>
+            <div class="text-center mb-5">
+                <div class="w-16 h-16 rounded-full brand-bg mx-auto flex items-center justify-center mb-3">
+                    <i class="fas fa-lock text-white text-2xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-white">Welcome Back</h2>
-                <p class="text-gray-400 text-sm mt-2">Login to access your dashboard</p>
+                <p class="text-gray-400 text-sm mt-1">Login to access your dashboard</p>
             </div>
             <form id="loginForm">
                 <div class="mb-4">
-                    <input type="email" id="loginEmail" class="login-input" placeholder="Email address" required>
+                    <input type="email" id="loginEmail" class="login-input" placeholder="Email address" required autocomplete="email">
                 </div>
-                <div class="mb-6">
-                    <input type="password" id="loginPassword" class="login-input" placeholder="Password" required>
+                <div class="mb-5">
+                    <input type="password" id="loginPassword" class="login-input" placeholder="Password" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt mr-2"></i> Sign In</button>
             </form>
-            <p class="text-center text-gray-500 text-xs mt-6">Secure access to Cars Kenya Management Systems</p>
+            <p class="text-center text-gray-500 text-xs mt-5">Secure access to Cars Kenya Management Systems</p>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl" style="padding-top: 80px;">
+    <div class="container mx-auto px-4 py-8 max-w-6xl" style="padding-top: 72px;">
         <!-- FortifyAI International Badge -->
         <div class="flex justify-end mb-6">
             <a href="https://www.fortifyai.international" 
-               class="fortify-badge external-link inline-flex items-center px-5 py-2.5 rounded-full border no-underline" data-app="fortifyai">
-                <div class="w-7 h-7 rounded-full bg-gradient-to-r from-green-600 to-green-400 flex items-center justify-center mr-3">
-                    <i class="fas fa-robot text-white text-sm"></i>
+               class="fortify-badge external-link inline-flex items-center px-4 py-2 rounded-full border no-underline text-sm" data-app="fortifyai">
+                <div class="w-6 h-6 rounded-full bg-gradient-to-r from-green-600 to-green-400 flex items-center justify-center mr-2">
+                    <i class="fas fa-robot text-white text-xs"></i>
                 </div>
-                <span class="text-sm font-medium text-gray-300">Powered by</span>
-                <span class="text-sm font-bold text-white ml-1">FortifyAI.International</span>
+                <span class="text-xs font-medium text-gray-300">Powered by</span>
+                <span class="text-xs font-bold text-white ml-1">FortifyAI.International</span>
             </a>
         </div>
         
         <!-- Header -->
-        <header class="flex flex-col items-center justify-center mb-12 pt-4">
-            <div class="logo-container mb-8">
-                <div class="w-36 h-36 rounded-full brand-bg flex items-center justify-center shadow-2xl" style="box-shadow: 0 0 40px rgba(19, 125, 15, 0.5);">
-                    <div class="w-32 h-32 rounded-full bg-gray-900 flex items-center justify-center">
+        <header class="flex flex-col items-center justify-center mb-10 pt-2">
+            <div class="logo-container mb-6">
+                <div class="w-28 h-28 rounded-full brand-bg flex items-center justify-center shadow-2xl" style="box-shadow: 0 0 30px rgba(19, 125, 15, 0.5);">
+                    <div class="w-24 h-24 rounded-full bg-gray-900 flex items-center justify-center">
                         <div class="text-center">
-                            <div class="text-5xl font-bold brand-color">CK</div>
-                            <div class="text-base font-semibold brand-color mt-2">Cars Kenya</div>
+                            <div class="text-4xl font-bold brand-color">CK</div>
+                            <div class="text-xs font-semibold brand-color mt-1">Cars Kenya</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <h1 class="domain-animation text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
+            <h1 class="domain-animation text-3xl md:text-4xl font-bold mb-4 text-white tracking-tight text-center">
                 WWW.CARSKENYA.CO.KE
             </h1>
-            <p class="tagline text-2xl md:text-3xl font-medium text-gray-200 mb-4">
+            <p class="tagline text-xl md:text-2xl font-medium text-gray-200 mb-3">
                 Seamless Car Imports
             </p>
-            <p class="text-gray-300 text-center max-w-2xl mt-6 text-lg">
+            <p class="text-gray-300 text-center max-w-2xl mt-4 text-base">
                 Your trusted partner for importing vehicles to Kenya with ease, transparency, and efficiency. 
                 Access our comprehensive management systems below.
             </p>
         </header>
         
         <!-- Dashboard Cards - Dynamically Rendered -->
-        <main class="mb-16">
-            <h2 class="text-3xl font-bold text-center text-white mb-12">Management Dashboard</h2>
-            <div id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <main class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-white mb-8">Management Dashboard</h2>
+            <div id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                 <!-- Cards will be injected here based on permissions -->
                 <div class="text-center text-gray-400 col-span-full"><i class="fas fa-spinner fa-spin mr-2"></i>Loading your access...</div>
             </div>
         </main>
         
         <!-- Footer -->
-        <footer class="mt-20 pt-12 pb-10 footer-bg rounded-2xl border border-gray-800/60">
-            <div class="flex flex-col md:flex-row justify-between items-center px-10">
-                <div class="mb-8 md:mb-0">
-                    <div class="flex items-center">
-                        <div class="w-14 h-14 rounded-full brand-bg flex items-center justify-center mr-5" style="box-shadow: 0 0 20px rgba(19, 125, 15, 0.5);">
-                            <div class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center">
-                                <div class="text-lg font-bold brand-color">CK</div>
+        <footer class="mt-16 pt-8 pb-8 footer-bg rounded-2xl border border-gray-800/60">
+            <div class="flex flex-col md:flex-row justify-between items-center px-6">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start">
+                        <div class="w-10 h-10 rounded-full brand-bg flex items-center justify-center mr-3" style="box-shadow: 0 0 15px rgba(19, 125, 15, 0.4);">
+                            <div class="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center">
+                                <div class="text-sm font-bold brand-color">CK</div>
                             </div>
                         </div>
                         <div>
-                            <div class="font-bold text-white text-xl">CarsKenya.co.ke</div>
-                            <div class="text-gray-300 text-lg">Seamless Car Imports</div>
+                            <div class="font-bold text-white text-lg">CarsKenya.co.ke</div>
+                            <div class="text-gray-300 text-sm">Seamless Car Imports</div>
                         </div>
                     </div>
-                    <div class="mt-6 text-gray-400 text-base">
+                    <div class="mt-4 text-gray-400 text-xs">
                         <p>© 2026 Cars Kenya. All rights reserved.</p>
-                        <p class="mt-2">Software by <span class="font-semibold text-green-400">FortifyAI.International</span></p>
+                        <p class="mt-1">Software by <span class="font-semibold text-green-400">FortifyAI.International</span></p>
                     </div>
                 </div>
                 <div class="text-center md:text-right">
-                    <p class="text-gray-300 mb-6 max-w-md text-lg">FortifyAI.International provides cutting-edge AI-powered solutions for business automation and management.</p>
-                    <div class="flex justify-center md:justify-end space-x-6 text-gray-400">
-                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-twitter text-2xl"></i></a>
-                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-facebook-f text-2xl"></i></a>
-                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-instagram text-2xl"></i></a>
-                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-linkedin-in text-2xl"></i></a>
+                    <p class="text-gray-300 mb-4 max-w-md text-sm">FortifyAI.International provides cutting-edge AI-powered solutions for business automation and management.</p>
+                    <div class="flex justify-center md:justify-end space-x-5 text-gray-400">
+                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="hover:text-green-500 transition-colors"><i class="fab fa-linkedin-in text-xl"></i></a>
                     </div>
                 </div>
             </div>
@@ -573,7 +586,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // App definitions: each card has id, url, icon, title, description, tags, and required permission key
+        // App definitions
         const APP_CARDS = [
             { id: 'docs', permission: 'docs', url: 'https://starksgalaxykenya.github.io/CK-MANAGER/', icon: 'fa-file-alt', title: 'Documentation', description: 'Access comprehensive import documentation, vehicle tracking, and management system.', tags: ['Import Forms', 'Vehicle Tracking', 'Process Guide'] },
             { id: 'finance', permission: 'finance', url: 'https://starksgalaxykenya.github.io/finance-system-ck/', icon: 'fa-chart-line', title: 'Finance Management', description: 'Manage invoices, payments, expenses, and financial reports for your car import business.', tags: ['Invoicing', 'Payment Tracking', 'Financial Reports'] },
@@ -584,7 +597,6 @@
         let currentUser = null;
         let userPermissions = { docs: false, finance: false, fleet: false, hr: false };
 
-        // Helper: show notification
         function showNotification(message, isError = false) {
             const existing = document.querySelector('.notification');
             if (existing) existing.remove();
@@ -595,59 +607,52 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Fetch user permissions from Firestore
         async function fetchUserPermissions(uid) {
             try {
                 const permDoc = await getDoc(doc(db, "users_permissions", uid));
-                if (permDoc.exists()) {
-                    return permDoc.data();
-                }
-                return { docs: false, finance: false, fleet: false, hr: false, isAdmin: false };
+                if (permDoc.exists()) return permDoc.data();
+                return { docs: false, finance: false, fleet: false, hr: false };
             } catch (error) {
                 console.error("Error fetching permissions:", error);
                 return { docs: false, finance: false, fleet: false, hr: false };
             }
         }
 
-        // Render dashboard cards based on permissions
         function renderDashboardCards(permissions) {
             const container = document.getElementById('cardsContainer');
             const allowedCards = APP_CARDS.filter(card => permissions[card.permission] === true);
             
             if (allowedCards.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12"><i class="fas fa-lock text-5xl text-gray-500 mb-4"></i><p class="text-gray-400 text-lg">You don't have access to any modules. Contact your administrator.</p></div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-10"><i class="fas fa-lock text-4xl text-gray-500 mb-3"></i><p class="text-gray-400">You don't have access to any modules. Contact your administrator.</p></div>`;
                 return;
             }
             
-            container.innerHTML = allowedCards.map((card, idx) => `
+            container.innerHTML = allowedCards.map((card) => `
                 <a href="${card.url}" class="card-hover block external-link" data-app="${card.id}" data-url="${card.url}">
                     <div class="dashboard-card rounded-2xl overflow-hidden h-full">
-                        <div class="p-8">
-                            <div class="flex items-center justify-center w-20 h-20 rounded-2xl card-icon mb-8 mx-auto">
-                                <i class="fas ${card.icon} text-white text-3xl"></i>
+                        <div class="p-6">
+                            <div class="flex items-center justify-center w-16 h-16 rounded-2xl card-icon mb-5 mx-auto">
+                                <i class="fas ${card.icon} text-white text-2xl"></i>
                             </div>
-                            <h3 class="text-2xl font-bold text-white mb-5 text-center">${card.title}</h3>
-                            <p class="text-gray-300 mb-7 text-center leading-relaxed">${card.description}</p>
+                            <h3 class="text-xl font-bold text-white mb-3 text-center">${card.title}</h3>
+                            <p class="text-gray-300 mb-5 text-center text-sm leading-relaxed">${card.description}</p>
                             <div class="flex justify-center">
-                                <span class="inline-flex items-center brand-color font-semibold text-lg">
-                                    Open System <i class="fas fa-external-link-alt ml-3"></i>
+                                <span class="inline-flex items-center brand-color font-semibold text-sm">
+                                    Open System <i class="fas fa-external-link-alt ml-2"></i>
                                 </span>
                             </div>
                         </div>
-                        <div class="px-8 pb-8">
-                            <div class="flex flex-wrap justify-center gap-3">
-                                ${card.tags.map(tag => `<span class="feature-badge text-sm font-medium px-4 py-2 rounded-full">${tag}</span>`).join('')}
+                        <div class="px-6 pb-6">
+                            <div class="flex flex-wrap justify-center gap-2">
+                                ${card.tags.map(tag => `<span class="feature-badge text-xs font-medium px-3 py-1.5 rounded-full">${tag}</span>`).join('')}
                             </div>
                         </div>
                     </div>
                 </a>
             `).join('');
-            
-            // Re-attach external link handlers for all cards to ensure they open inside PWA context
             attachExternalLinkHandlers();
         }
         
-        // Update navigation dynamic links based on permissions
         function updateNavLinks(permissions) {
             const navContainer = document.getElementById('dynamicNavLinks');
             if (!navContainer) return;
@@ -658,32 +663,26 @@
             if (permissions.hr) navItems.push({ id: 'hr', icon: 'fa-users', label: 'Workspace', url: 'https://starksgalaxykenya.github.io/CK-HR/' });
             
             navContainer.innerHTML = navItems.map(item => `
-                <a href="${item.url}" class="nav-icon external-link" data-app="${item.id}" data-url="${item.url}">
-                    <i class="fas ${item.icon} text-xl"></i>
+                <a href="${item.url}" class="nav-icon external-link" data-app="${item.id}" data-url="${item.url}" style="display: flex; flex-direction: row; align-items: center; gap: 5px;">
+                    <i class="fas ${item.icon}"></i>
                     <span class="nav-text">${item.label}</span>
                 </a>
             `).join('');
             attachExternalLinkHandlers();
         }
         
-        // Handle all external links to open inside PWA (same window/target)
         function attachExternalLinkHandlers() {
             document.querySelectorAll('.external-link').forEach(link => {
-                // Remove old listener to avoid duplicates
                 const newLink = link.cloneNode(true);
                 link.parentNode.replaceChild(newLink, link);
                 newLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     const url = newLink.getAttribute('href') || newLink.getAttribute('data-url');
-                    if (url) {
-                        // Open within same PWA context (ensures no external browser)
-                        window.location.href = url;
-                    }
+                    if (url) window.location.href = url;
                 });
             });
         }
         
-        // UI update based on auth state
         async function updateUIForUser(user) {
             const loginModal = document.getElementById('loginModal');
             const loginAvatarBtn = document.getElementById('loginAvatarBtn');
@@ -694,33 +693,28 @@
                 currentUser = user;
                 const perms = await fetchUserPermissions(user.uid);
                 userPermissions = perms;
-                // Render cards and nav
                 renderDashboardCards(userPermissions);
                 updateNavLinks(userPermissions);
-                // Show user avatar, hide login avatar
                 loginAvatarBtn.classList.add('hidden');
                 userAvatarBtn.classList.remove('hidden');
                 loginModal.classList.add('hidden');
                 showNotification(`Welcome ${user.email}`, false);
             } else {
-                // Not logged in: show login modal, hide dashboard content, show default placeholder
                 currentUser = null;
                 userPermissions = { docs: false, finance: false, fleet: false, hr: false };
-                renderDashboardCards({ docs: false, finance: false, fleet: false, hr: false }); // shows no access message but requires login
+                renderDashboardCards({ docs: false, finance: false, fleet: false, hr: false });
                 updateNavLinks({});
                 loginAvatarBtn.classList.remove('hidden');
                 userAvatarBtn.classList.add('hidden');
                 logoutDropdown.classList.remove('show');
                 loginModal.classList.remove('hidden');
-                // Override container to show login required message
                 const container = document.getElementById('cardsContainer');
-                container.innerHTML = `<div class="col-span-full text-center py-12"><i class="fas fa-lock text-5xl text-gray-500 mb-4"></i><p class="text-gray-400 text-lg">Please login to access your modules</p><button id="showLoginBtnFromMsg" class="mt-4 brand-bg px-6 py-2 rounded-lg">Sign In</button></div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-10"><i class="fas fa-lock text-4xl text-gray-500 mb-3"></i><p class="text-gray-400">Please login to access your modules</p><button id="showLoginBtnFromMsg" class="mt-3 brand-bg px-5 py-2 rounded-lg text-sm">Sign In</button></div>`;
                 const loginBtnMsg = document.getElementById('showLoginBtnFromMsg');
                 if (loginBtnMsg) loginBtnMsg.addEventListener('click', () => document.getElementById('loginModal').classList.remove('hidden'));
             }
         }
         
-        // Login form handler
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -735,7 +729,6 @@
             }
         });
         
-        // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             await signOut(auth);
             showNotification('Logged out', false);
@@ -743,7 +736,6 @@
             await updateUIForUser(null);
         });
         
-        // Avatar dropdown
         const userAvatarBtn = document.getElementById('userAvatarBtn');
         const logoutDropdown = document.getElementById('logoutDropdown');
         userAvatarBtn.addEventListener('click', (e) => {
@@ -752,16 +744,11 @@
         });
         document.addEventListener('click', () => logoutDropdown.classList.remove('show'));
         
-        // Auth state listener
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                await updateUIForUser(user);
-            } else {
-                await updateUIForUser(null);
-            }
+            if (user) await updateUIForUser(user);
+            else await updateUIForUser(null);
         });
         
-        // PWA & Install logic (preserve existing)
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -782,7 +769,6 @@
             navigator.serviceWorker.register('/CK-DASHBOARD/service-worker.js').catch(console.log);
         }
         
-        // Additional effect: domain typing effect
         setTimeout(() => {
             const tagline = document.querySelector('.tagline');
             if (tagline && tagline.textContent === 'Seamless Car Imports') {
@@ -790,11 +776,11 @@
                 tagline.textContent = '';
                 let i = 0;
                 function type() {
-                    if (i < text.length) { tagline.textContent += text.charAt(i); i++; setTimeout(type, 50); }
+                    if (i < text.length) { tagline.textContent += text.charAt(i); i++; setTimeout(type, 45); }
                 }
                 type();
             }
-        }, 1500);
+        }, 1200);
     </script>
 </body>
 </html>
